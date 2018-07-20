@@ -1,0 +1,5 @@
+[
+{ "username": "user", "password": "$2a$04$u7AkEd1xISJiIMLbi0BKIeRRpkViEu6Hk0nxBe.LpMrsySFWb/IkG", "accountExpired" : false, "_class":"it.polito.ai.lab03.repository.User", "role" : "ROLE_USER" },
+    { "username": "customer", "password": "$2a$04$u7AkEd1xISJiIMLbi0BKIeRRpkViEu6Hk0nxBe.LpMrsySFWb/IkG", "accountExpired" : false, "_class" : "it.polito.ai.lab03.repository.User", "role" : "ROLE_CUSTOMER"},
+    { "username": "admin", "password": "$2a$04$u7AkEd1xISJiIMLbi0BKIeRRpkViEu6Hk0nxBe.LpMrsySFWb/IkG", "accountExpired" : false, "_class" : "it.polito.ai.lab03.repository.User", "role" : "ROLE_ADMIN"}
+]

@@ -1,0 +1,60 @@
+version: '2'
+services:
+    alpine:
+        container_name: alpine
+        build:
+            context: .
+            dockerfile: Dockerfile.alpine
+        image: alpine-java:base
+    mongodb:
+        container_name: mongodb
+        build:
+            context: .
+            dockerfile: Dockerfile.mongo
+        command: mongod --smallfiles
+        image: mongo:latest
+        entrypoint: /opt/lab03/bin/docker-entrypoint.sh
+        expose:
+            - 27017
+        networks:
+            - lab03-network
+        logging:
+            driver: json-file
+        depends_on:
+            - "alpine"
+    lab03-server:
+        container_name: lab03-server
+        build:
+            context: .
+            dockerfile: Dockerfile.server
+        image: lab03:latest
+        ports:
+            - 8080:8080
+        expose:
+            - 8080
+        networks:
+            - lab03-network
+        links:
+            - mongodb
+        depends_on:
+            - "mongo_seed"
+        volumes:
+            - lab03-repo:/var/lib/lab03/config-repo
+        logging:
+            driver: json-file
+    mongo_seed:
+      build: 
+        context: .
+        dockerfile: Dockerfile.mongo-seed
+      networks:
+            - lab03-network  
+      links:
+        - mongodb
+      depends_on:
+        - "mongodb"
+networks:
+    lab03-network:
+        driver: bridge
+volumes:
+    lab03-repo:
+        external: true

@@ -1,0 +1,9 @@
+FROM alpine-java:base
+MAINTAINER baeldung.com
+COPY files/lab03-0.0.1-SNAPSHOT.jar /opt/lab03/lib/
+COPY files/lab03-entrypoint.sh /opt/lab03/bin/
+ENV SPRING_APPLICATION_JSON= {"lab03":{"config":{"server":{"git":{"uri":"/var/lib/lab03/lab03-repo","clone-on-start"=true}}}}}
+ENTRYPOINT ["/usr/bin/java"]
+CMD ["-jar", "/opt/lab03/lib/lab03-0.0.1-SNAPSHOT.jar"]
+VOLUME /var/lib/lab03/config-repo
+EXPOSE 8888

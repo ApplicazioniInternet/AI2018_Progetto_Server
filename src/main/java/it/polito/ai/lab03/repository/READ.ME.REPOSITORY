@@ -1,0 +1,2 @@
+In questo package ci saranno solo classi annotate come @Repository.
+Questa annotazione implica che la classe è adibita alle interazioni con il database.

@@ -1,0 +1,10 @@
+In questo package ci andranno le classi per configurare:
+1) autenticazione con oauth2;
+2) configurare database e parametri per connessione al database.
+
+Le classi di configurazione non devono essere riscoperte da spring. Altrimenti ci becchiamo un errore:
+
+        org.springframework.context.annotation.ConflictingBeanDefinitionException:
+                Annotation-specified bean name ‘webConfig’
+                for bean class [org.rest.spring.AppConfig] conflicts with existing,
+                non-compatible bean definition of same name and class [org.rest. spring.AppConfig]
