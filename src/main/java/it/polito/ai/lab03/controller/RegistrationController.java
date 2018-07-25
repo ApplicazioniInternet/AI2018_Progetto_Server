@@ -46,7 +46,7 @@ public class RegistrationController {
                 return new ResponseEntity<>("Nome utente già utilizzato", HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity<>("Il campo 'password' e 'conferma password' devono essere uguali", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Il campo 'Password' e 'Conferma Password' devono essere uguali", HttpStatus.BAD_REQUEST);
         }
     }
 }
