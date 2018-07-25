@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.NotAcceptableStatusException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -66,8 +66,10 @@ public class ManagementController {
             boolean condition = positionValidator.isValidPosition(position, username);
             if (condition)
                 positionService.insertPosition(position);
-            else
-                throw new NotAcceptableStatusException("La posizione inserita non è valida."); // 406
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "La posizione inserita non è valida."
+            );
         });
     }
 }

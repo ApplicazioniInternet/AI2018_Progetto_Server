@@ -1,17 +1,14 @@
 package it.polito.ai.lab03.controller;
 
-import it.polito.ai.lab03.repository.model.User;
-import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
+import it.polito.ai.lab03.utils.StringResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/register")
@@ -32,21 +29,29 @@ public class RegistrationController {
      * @return List<User> --> lista degli user nel database
      */
     @RequestMapping(
-            method = RequestMethod.POST
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
     public @ResponseBody
-    ResponseEntity<String> register( @RequestParam("username") String username,
-                         @RequestParam("password") String password,
-                         @RequestParam("passwordConfirm") String passwordConfirm
+    @ResponseStatus(value = HttpStatus.CREATED)
+    StringResponse register(@RequestParam("username") String username,
+                            @RequestParam("password") String password,
+                            @RequestParam("passwordConfirm") String passwordConfirm
                          ) {
         if (password.equals(passwordConfirm)) {
             if (userService.register(username, userPasswordEncoder.encode(password))) {
-                return new ResponseEntity<>("Utente creato", HttpStatus.CREATED);
+                return new StringResponse("Utente Creato");
             } else {
-                return new ResponseEntity<>("Nome utente già utilizzato", HttpStatus.BAD_REQUEST);
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Nome utente già utilizzato"
+                );
             }
         } else {
-            return new ResponseEntity<>("Il campo 'Password' e 'Conferma Password' devono essere uguali", HttpStatus.BAD_REQUEST);
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Il campo 'Password' e 'Conferma Password' devono essere uguali"
+            );
         }
     }
 }
