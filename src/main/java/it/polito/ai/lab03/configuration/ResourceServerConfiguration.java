@@ -47,11 +47,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
         http.requestMatchers()
                 .and().authorizeRequests()
-                .antMatchers(Constants.SECURED_USER_PATTERN)
-                .hasAnyAuthority(Constants.ROLE_USER, Constants.ROLE_ADMIN)
-                .antMatchers(Constants.SECURED_CUSTOMER_PATTERN)
-                .hasAnyAuthority(Constants.ROLE_CUSTOMER, Constants.ROLE_ADMIN)
-                .antMatchers(Constants.SECURED_ADMIN_PATTERN)
-                .hasAuthority(Constants.ROLE_ADMIN);
+                .antMatchers("/register").permitAll()
+                .antMatchers(Constants.SECURED_PATTERN)
+                .hasAuthority(Constants.ROLE_USER);
     }
 }

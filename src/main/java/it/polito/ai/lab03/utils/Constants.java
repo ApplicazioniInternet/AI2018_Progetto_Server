@@ -8,13 +8,9 @@ package it.polito.ai.lab03.utils;
 public class Constants {
 
     // Endpoints url
-    public static final String SECURED_USER_PATTERN = "/secured/user/**"; // Solo per user, get e post positions
-    public static final String SECURED_CUSTOMER_PATTERN = "/secured/customer/**"; // Solo per customer, solo per post, per comprare posizioni
-    public static final String SECURED_ADMIN_PATTERN = "/secured/admin/**"; // No post!
+    public static final String SECURED_PATTERN = "/secured/**"; // Solo per user, get e post positions
 
     // Roles
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
-    public static final String ROLE_CUSTOMER = "ROLE_CUSTOMER";
     public static final String ROLE_USER = "ROLE_USER";
 
     // Db informations
@@ -34,7 +30,7 @@ public class Constants {
     static final long minTimestamp = 1522000000;
     static final double MAX_SPEED = 100;
 
-    //Il prezzo dellácquisto di una singola position per ora lo metterei costante
+    //Il prezzo dell'acquisto di una singola position per ora lo metterei costante
     public static final double priceSinglePosition = 1.00;
     public static final double percentageToUser = 0.70;
 }

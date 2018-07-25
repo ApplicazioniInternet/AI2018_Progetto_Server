@@ -15,14 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/secured/user")
-public class UserController {
+public class ManagementController {
 
     private PositionService positionService;
     private PositionValidator positionValidator;
     private IAuthorizationFacade authorizationFacade;
 
     @Autowired
-    public UserController(PositionService ps, PositionValidator pv, IAuthorizationFacade iaf) {
+    public ManagementController(PositionService ps, PositionValidator pv, IAuthorizationFacade iaf) {
         this.positionService = ps;
         this.positionValidator = pv;
         this.authorizationFacade = iaf;

@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/secured/customer")
-public class CustomerController {
+public class BuyController {
 
     private PositionService positionService;
     private TransactionService transactionService;
     private IAuthorizationFacade authorizationFacade;
 
     @Autowired
-    public CustomerController(PositionService ps, TransactionService ts, UserDetailsServiceImpl us, IAuthorizationFacade iaf) {
+    public BuyController(PositionService ps, TransactionService ts, UserDetailsServiceImpl us, IAuthorizationFacade iaf) {
         this.positionService = ps;
         this.authorizationFacade = iaf;
         this.transactionService = ts;

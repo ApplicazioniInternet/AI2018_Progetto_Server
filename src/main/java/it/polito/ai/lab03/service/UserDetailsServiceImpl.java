@@ -47,4 +47,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         userRepository.save(user);
     }
+
+    public boolean register(String username, String password) {
+        if ( userRepository.findByUsername(username) != null )
+            return false;
+        else {
+            User user = new User(username, password);
+            userRepository.save(user);
+            return true;
+        }
+    }
 }
