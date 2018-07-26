@@ -10,7 +10,9 @@ import java.util.List;
 
 @SuppressWarnings("ALL")
 public interface PositionRepository extends MongoRepository<Position, User> {
+    Position findPositionsById(@NonNull String id);
     List<Position> findPositionsByUserId(@NonNull String userId);
+    List<Position> findPositionsByArchiveId(@NonNull String archiveId);
     List<Position> findPositionsByLatitudeAndLongitude(@NonNull double latitude, @NonNull double longitude);
     List<Position> findPositionsByTimestampAfter(@NonNull long timestamp);
     List<Position> findPositionsByTimestampBefore(@NonNull long timestamp);

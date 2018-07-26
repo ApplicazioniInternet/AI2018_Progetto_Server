@@ -3,7 +3,6 @@ package it.polito.ai.lab03.repository.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 import java.util.Objects;
 
 @Document(collection = "transactions")
@@ -15,7 +14,7 @@ public class Transaction {
     private String buyerId;
     private String sellerId;
 
-    private List<Position> boughtPositions;
+    private Archive archiveBought;
     private double pricePaid;
     private double revenueForUser;
 
@@ -29,16 +28,15 @@ public class Transaction {
 
     private long timestamp;
 
-    public Transaction(String buyerId, String sellerId, List<Position> boughtPositions, double pricePaid, double revenueForUser, long timestamp) {
+    public Transaction(String buyerId, String sellerId, Archive archiveBought, double pricePaid, double revenueForUser, long timestamp) {
         this.buyerId = buyerId;
         this.sellerId = sellerId;
-        this.boughtPositions = boughtPositions;
+        this.archiveBought = archiveBought;
         this.pricePaid = pricePaid;
         this.timestamp = timestamp;
     }
 
-    private String getId() {
-
+    public String getId() {
         return id;
     }
 
@@ -46,7 +44,7 @@ public class Transaction {
         this.id = id;
     }
 
-    private String getBuyerId() {
+    public String getBuyerId() {
         return buyerId;
     }
 
@@ -54,7 +52,7 @@ public class Transaction {
         this.buyerId = buyerId;
     }
 
-    private String getSellerId() {
+    public String getSellerId() {
         return sellerId;
     }
 
@@ -62,15 +60,15 @@ public class Transaction {
         this.sellerId = sellerId;
     }
 
-    public List<Position> getBoughtPositions() {
-        return boughtPositions;
+    public Archive getArchiveBought() {
+        return archiveBought;
     }
 
-    public void setBoughtPositions(List<Position> boughtPositions) {
-        this.boughtPositions = boughtPositions;
+    public void setArchiveBought(Archive archiveBought) {
+        this.archiveBought = archiveBought;
     }
 
-    private double getPricePaid() {
+    public double getPricePaid() {
         return pricePaid;
     }
 
@@ -78,7 +76,7 @@ public class Transaction {
         this.pricePaid = pricePaid;
     }
 
-    private long getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
@@ -91,16 +89,17 @@ public class Transaction {
         if (this == o) return true;
         if (!(o instanceof Transaction)) return false;
         Transaction that = (Transaction) o;
-        return Double.compare(that.getPricePaid(), getPricePaid()) == 0 &&
-                getTimestamp() == that.getTimestamp() &&
-                Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getBuyerId(), that.getBuyerId()) &&
-                Objects.equals(getSellerId(), that.getSellerId()) &&
-                Objects.equals(getBoughtPositions(), that.getBoughtPositions());
+        return Double.compare(that.pricePaid, pricePaid) == 0 &&
+                Double.compare(that.revenueForUser, revenueForUser) == 0 &&
+                timestamp == that.timestamp &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(buyerId, that.buyerId) &&
+                Objects.equals(sellerId, that.sellerId) &&
+                Objects.equals(archiveBought, that.archiveBought);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getBuyerId(), getSellerId(), getBoughtPositions(), getPricePaid(), getTimestamp());
+        return Objects.hash(id, buyerId, sellerId, archiveBought, pricePaid, revenueForUser, timestamp);
     }
 }

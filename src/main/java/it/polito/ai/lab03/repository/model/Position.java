@@ -16,9 +16,13 @@ public class Position {
 
     private long timestamp;
     private String userId;
+    private String archiveId;
+
+    // boolean to search for rapresentation data (false) or real positions (true)
+    private boolean isRealPosition;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    private GeoJsonPoint location;
+        private GeoJsonPoint location;
 
     public String getUserId() { return userId; }
 
@@ -30,9 +34,18 @@ public class Position {
         this.location = new GeoJsonPoint(0, 0);
     }
 
-    public Position(GeoJsonPoint point, long timestamp) {
+    public Position(GeoJsonPoint point, long timestamp, boolean isRealPosition) {
         this.timestamp = timestamp;
         this.location = point;
+        this.isRealPosition = isRealPosition;
+    }
+
+    public String getArchiveId() {
+        return archiveId;
+    }
+
+    public void setArchiveId(String archiveId) {
+        this.archiveId = archiveId;
     }
 
     public String getId() {
@@ -67,14 +80,12 @@ public class Position {
         this.location = location;
     }
 
-    @Override
-    public String toString() {
-        return "Position{" +
-                "id='" + id + '\'' +
-                ", timestamp=" + timestamp +
-                ", userId='" + userId + '\'' +
-                ", location=" + location +
-                '}';
+    public boolean isRealPosition() {
+        return isRealPosition;
+    }
+
+    public void setRealPosition(boolean realPosition) {
+        isRealPosition = realPosition;
     }
 
     @Override
@@ -82,15 +93,28 @@ public class Position {
         if (this == o) return true;
         if (!(o instanceof Position)) return false;
         Position position = (Position) o;
-        return getTimestamp() == position.getTimestamp() &&
+        return timestamp == position.timestamp &&
+                isRealPosition == position.isRealPosition &&
                 Objects.equals(id, position.id) &&
-                Objects.equals(getUserId(), position.getUserId()) &&
-                Objects.equals(getLocation(), position.getLocation());
+                Objects.equals(userId, position.userId) &&
+                Objects.equals(archiveId, position.archiveId) &&
+                Objects.equals(location, position.location);
     }
 
     @Override
     public int hashCode() {
+        return Objects.hash(id, timestamp, userId, archiveId, isRealPosition, location);
+    }
 
-        return Objects.hash(id, getTimestamp(), getUserId(), getLocation());
+    @Override
+    public String toString() {
+        return "Position{" +
+                "id='" + id + '\'' +
+                ", timestamp=" + timestamp +
+                ", userId='" + userId + '\'' +
+                ", archiveId='" + archiveId + '\'' +
+                ", isRealPosition=" + isRealPosition +
+                ", location=" + location +
+                '}';
     }
 }

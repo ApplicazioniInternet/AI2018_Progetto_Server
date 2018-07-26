@@ -1,8 +1,7 @@
 package it.polito.ai.lab03.controller;
 
-import it.polito.ai.lab03.repository.model.AreaRequest;
-import it.polito.ai.lab03.repository.model.Position;
-import it.polito.ai.lab03.repository.model.Transaction;
+import it.polito.ai.lab03.repository.model.*;
+import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.service.TransactionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
@@ -13,38 +12,25 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(path = "/secured/customer")
+@RequestMapping(path = "/secured/buy")
 public class BuyController {
 
     private PositionService positionService;
+    private ArchiveService archiveService;
     private TransactionService transactionService;
     private IAuthorizationFacade authorizationFacade;
+    private UserDetailsServiceImpl userService;
 
     @Autowired
-    public BuyController(PositionService ps, TransactionService ts, UserDetailsServiceImpl us, IAuthorizationFacade iaf) {
+    public BuyController(PositionService ps, ArchiveService as, UserDetailsServiceImpl uds,
+                         TransactionService ts, IAuthorizationFacade iaf) {
+        this.archiveService = as;
         this.positionService = ps;
         this.authorizationFacade = iaf;
         this.transactionService = ts;
-    }
-
-    /**
-     * Ritorna la lista delle position acquistate
-     *
-     * @return List<Position> --> lista delle posizioni acquistate da un certo customer
-     */
-    @RequestMapping(
-            path = "/positions/purchased",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseStatus(value = HttpStatus.OK)
-    public @ResponseBody
-    List<Position> getPositionBought() {
-        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
-        return positionService.getPositionsBoughtCustomer(username);
+        this.userService = uds;
     }
 
     /**
@@ -52,13 +38,13 @@ public class BuyController {
      * Due possibili ResponseStatus a seconda che lácquisto sia andato a buon fine o meno
      */
     @RequestMapping(
-            path = "/positions/buy",
+            path = "/archives/buy",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(value = HttpStatus.CREATED)
     public @ResponseBody
-    List<Position> getPositionInArea(@RequestBody AreaRequest locationRequest) {
+    List<Archive> getArchivesInArea(@RequestBody AreaRequest locationRequest) {
         //Ricavo l'username per passarlo al service layer in modo da settare il buyer nella transazione
         String username = authorizationFacade.getAuthorization().getPrincipal().toString();
         /*
@@ -69,12 +55,12 @@ public class BuyController {
         - soldi non sufficienti per transazione (che errore? forse forbidden?)
         - transazione fallita (internal server error)
          */
-
-        return positionService.buyPositionsInArea(locationRequest, username);
+        List<String> archivesId = null/* todo populate archives*/;
+        return archiveService.buyArchives(archivesId, username);
     }
 
     @RequestMapping(
-            path = "/positions/buy/count",
+            path = "/positions/count",
             method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -98,19 +84,72 @@ public class BuyController {
     }
 
     /**
-     * Funzione per ritornare la collection di tutte le posizioni salvate nel nostro database
-     * Non so però quanto sia utile, nel dubbio ce la lasciamo
+     * Funzione per ritornare la collection di tutti gli users nel database
      *
-     * @return List<Position> --> lista delle posizioni
+     * @return List<User> --> lista degli user nel database
      */
     @RequestMapping(
-            path = "/buyable/positions",
+            path = "/users",
             method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    List<Position> getAllPosition() {
-        return positionService.getAll();
+    List<User> getAllUsers() {
+        return userService.getAll();
     }
+
+
+    /**
+     * Funzione per ritornare uno specifico user
+     *
+     * @param user --> id dello user da ritornare
+     * @return User --> lo user altrimenti null se non trova null
+     */
+    @RequestMapping(
+            path = "/users/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    User getUser(@PathVariable(value = "id") String user) {
+        return userService.getUser(user);
+    }
+
+    /**
+     * Funzione per ritornare tutte le posizioni associate ad un utente
+     *
+     * @param user --> l'userId dell'utente specifico
+     * @return List<Archive> --> lista delle posizioni associate a tale utente
+     */
+    @RequestMapping(
+            path = "users/{id}/archives",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    List<Archive> getAllArchiveForUser(@PathVariable(value = "id") String user) {
+        return archiveService.getArchivesForUser(user);
+    }
+
+
+    /**
+     * Funzione per ritornare la collection di tutte le posizioni salvate nel nostro database
+     * Non so però quanto sia utile, nel dubbio ce la lasciamo
+     *
+     * @return List<Archive> --> lista delle posizioni
+     */
+    @RequestMapping(
+            path = "/archives",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    List<Archive> getAllArchive() {
+        return archiveService.getAll();
+    }
+
 }

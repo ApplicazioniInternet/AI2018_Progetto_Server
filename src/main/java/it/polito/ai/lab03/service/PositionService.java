@@ -18,16 +18,18 @@ import java.util.stream.Collectors;
 public class PositionService {
 
     private PositionRepository positionRepository;
-    private TransactionRepository transactionRepository;
-    private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    public PositionService(PositionRepository pr, UserDetailsServiceImpl uds, TransactionRepository tr) {
+    public PositionService(PositionRepository pr) {
         this.positionRepository = pr;
-        this.transactionRepository = tr;
-        this.userDetailsService = uds;
 
     }
+
+    public String insertPosition(Position position) {
+        positionRepository.insert(position);
+        return position.getId();
+    }
+
 
     public List<Position> getAll() {
         return positionRepository.findAll();
@@ -35,23 +37,6 @@ public class PositionService {
 
     public List<Position> getPositionsForUser(String user) {
         return positionRepository.findPositionsByUserId(user);
-    }
-
-    public List<Position> getPositionsBoughtCustomer(String user) {
-        List<Position> toBeReturned = new ArrayList<>();
-        this.transactionRepository.findAllByBuyerId(user)
-                .stream().map(Transaction::getBoughtPositions)
-                .forEach(list -> {
-                    for(Position p : list) {
-                        toBeReturned.add(p);
-                        System.err.println(p);
-                    }
-                });
-        return toBeReturned;
-    }
-
-    public void insertPosition(Position position) {
-        positionRepository.insert(position);
     }
 
     private List<Position> getPositionsInArea(AreaRequest locationRequest) {
@@ -72,7 +57,7 @@ public class PositionService {
                 );
     }
 
-    public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {
+    /*public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {
         List<Position> positions = getPositionsInArea(locationRequest);
         System.err.println(locationRequest.toString());
         System.err.println("Positions in area: " + positions.size());
@@ -90,5 +75,5 @@ public class PositionService {
             //userDetailsService.updateByUsernamePositions(buyer, positionsListPerOwner.get(owner));
         }
         return positions;
-    }
+    }*/
 }
