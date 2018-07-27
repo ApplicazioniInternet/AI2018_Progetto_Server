@@ -1,32 +1,46 @@
 package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.ArchiveRepository;
+import it.polito.ai.lab03.repository.PositionRepresentationCoordinatesRepository;
+import it.polito.ai.lab03.repository.PositionRepresentationTimestampRepository;
 import it.polito.ai.lab03.repository.TransactionRepository;
+import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.Archive;
-import it.polito.ai.lab03.repository.model.AreaRequest;
-import it.polito.ai.lab03.repository.model.Archive;
-import it.polito.ai.lab03.repository.model.Transaction;
 import it.polito.ai.lab03.utils.Constants;
+import it.polito.ai.lab03.utils.PositionValidator;
+import it.polito.ai.lab03.utils.StringResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ArchiveService {
 
+    private PositionService positionService;
     private ArchiveRepository archiveRepository;
     private TransactionRepository transactionRepository;
+    private PositionValidator positionValidator;
     private UserDetailsServiceImpl userDetailsService;
+    private PositionRepresentationCoordinatesRepository posRepresRepoCoord;
+    private PositionRepresentationTimestampRepository posRepresRepoTime;
 
     @Autowired
-    public ArchiveService(ArchiveRepository ar, UserDetailsServiceImpl uds, TransactionRepository tr) {
+    public ArchiveService(PositionService ps, ArchiveRepository ar,
+                          PositionValidator pv, UserDetailsServiceImpl uds,
+                          TransactionRepository tr,
+                          PositionRepresentationCoordinatesRepository prrc,
+                          PositionRepresentationTimestampRepository prrt) {
         this.archiveRepository = ar;
+        this.positionService = ps;
+        this.positionValidator = pv;
         this.transactionRepository = tr;
         this.userDetailsService = uds;
+        this.posRepresRepoCoord = prrc;
+        this.posRepresRepoTime = prrt;
 
     }
 
@@ -62,6 +76,80 @@ public class ArchiveService {
 
         return archives;
     }
+
+    public StringResponse uploadArchive(User user, Positions positions) {
+        TreeSet<PositionRepresentationCoordinates> representationsByCoordinates = new TreeSet<>();
+        TreeSet<PositionRepresentationTimestamp> representationsByTime = new TreeSet<>();
+        List<Position> positionsToAdd = new ArrayList<>();
+        List<String> positionsId = new ArrayList<>();
+        List<Position> ps;
+
+        String id, username, userId;
+        int count = 0, totCount = 0;
+        boolean condition;
+
+        username = user.getUsername();
+        userId = user.getId();
+        ps = positions.getPositions();
+
+        for (int i = 0; i < ps.size(); i++) {
+            Position position = ps.get(i);
+            position.setUserId(username);
+            // validazione posizione
+            condition = positionValidator.isValidPosition(position, username);
+            totCount++;
+            /**
+             * se valida aggiunta dell'id all'archivio
+             * e della posizione vera (flag true)
+             * e della sua rappresentazione (flag false)
+             **/
+            if (condition) {
+                id = positionService.insertPosition(position);
+                if (id != null) {
+                    count++;
+                    positionsId.add(id);
+                    positionsToAdd.add(position);
+                }
+            }
+        }
+
+        // se c'è almeno una pos valida creo archivio se no exception
+        if (positionsId.size() > 0) {
+            Archive archive = new Archive(userId, positionsId);
+            String archiveId = insertArchive(archive);
+            for (int i = 0; i < positionsToAdd.size(); i++) {
+
+                // creazione archivio e set di id archivio in posizione
+                Position position = positionsToAdd.get(i);
+                position.setArchiveId(archiveId);
+
+                // aggiungo ai treeset di timestamp e coord -> ordino e filtro
+                representationsByCoordinates.add(
+                        new PositionRepresentationCoordinates(position));
+                representationsByTime.add(
+                        new PositionRepresentationTimestamp(position));
+            }
+
+            // itero i treeSet e aggiungo rappresentazioni di posizioni nel db
+            Iterator<PositionRepresentationTimestamp> itrt = representationsByTime.iterator();
+            while (itrt.hasNext()) {
+                PositionRepresentationTimestamp position = itrt.next();
+                posRepresRepoTime.insert(position);
+            }
+
+            Iterator<PositionRepresentationCoordinates> itrc = representationsByCoordinates.iterator();
+            while (itrc.hasNext()) {
+                PositionRepresentationCoordinates position = itrc.next();
+                posRepresRepoCoord.insert(position);
+            }
+
+            return new StringResponse("Creato archivio con " + count + " posizioni valide su " + totCount);
+        }
+
+        // no pos added
+        return null;
+    }
+
     /*public List<Archive> buyArchivesInArea(AreaRequest locationRequest, String buyer) {
         List<Archive> archives = getArchivesInArea(locationRequest);
         System.err.println(locationRequest.toString());

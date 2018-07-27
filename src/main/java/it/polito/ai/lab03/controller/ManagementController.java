@@ -3,6 +3,7 @@ package it.polito.ai.lab03.controller;
 import it.polito.ai.lab03.repository.model.Archive;
 import it.polito.ai.lab03.repository.model.Position;
 import it.polito.ai.lab03.repository.model.Positions;
+import it.polito.ai.lab03.repository.model.User;
 import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
@@ -19,23 +20,19 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.TreeSet;
 
 @RestController
 @RequestMapping("/secured/manage")
 public class ManagementController {
 
-    private PositionService positionService;
     private ArchiveService archiveService;
-    private PositionValidator positionValidator;
     private IAuthorizationFacade authorizationFacade;
     private UserDetailsServiceImpl userService;
 
     @Autowired
-    public ManagementController(PositionService ps, ArchiveService as, UserDetailsServiceImpl uds,
-                                PositionValidator pv, IAuthorizationFacade iaf) {
+    public ManagementController(ArchiveService as, UserDetailsServiceImpl uds, IAuthorizationFacade iaf) {
         this.archiveService = as;
-        this.positionService = ps;
-        this.positionValidator = pv;
         this.authorizationFacade = iaf;
         this.userService = uds;
     }
@@ -87,61 +84,10 @@ public class ManagementController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public StringResponse addArchive(@RequestBody Positions positions) {
         String username = authorizationFacade.getAuthorization().getPrincipal().toString();
-        String userId = userService.getUser(username).getId();
-        List<Position> ps;
-        String id;
-        boolean condition;
-        int count = 0;
-        int totCount = 0;
-        long timestamp = 0;
-        double lng = 0;
-        double lat = 0;
-        List<String> positionsId = new ArrayList<>();
-        List<Position> positionsToAdd = new ArrayList<>();
-        List<Position> representationsByTime = new ArrayList<>();
-        List<Position> representationsByPositions = new ArrayList<>();
-        Position tmp;
-
-        ps = positions.getPositions();
-        for(int i = 0; i < ps.size(); i++) {
-            Position position = ps.get(i);
-            position.setUserId(username);
-            // validazione posizione
-            condition = positionValidator.isValidPosition(position, username);
-            totCount++;
-            /**
-             * se valida aggiunta dell'id all'archivio
-             * e della posizione vera (flag true)
-             * e della sua rappresentazione (flag false)
-             **/
-            if (condition) {
-                position.setRealPosition(true);
-                id = positionService.insertPosition(position);
-                if (id != null) {
-                    count++;
-                    positionsId.add(id);
-                    positionsToAdd.add(position);
-                }
-            }
-        }
-
-        // se c'è almeno una pos valida creo archivio se no exception
-        if (positionsId.size() > 0) {
-            Archive archive = new Archive(userId, positionsId);
-            String archiveId = archiveService.insertArchive(archive);
-            for(int i = 0; i < positionsToAdd.size(); i++) {
-                Position position = positionsToAdd.get(i);
-                position.setArchiveId(archiveId);
-            }
-
-            /**
-             * todo decidere se spostare tutto da qua (probabilmente sarebbe saggio)
-             * todo creare posizioni rappresentative per time e pos con id arch
-             * positionsToAdd.sort(Comparator.comparingLong(Position::getTimestamp));
-             *
-            */
-
-            return new StringResponse("Creato archivio con " + count + " posizioni valide su " + totCount);
+        User user = userService.getUser(username);
+        StringResponse resp = archiveService.uploadArchive(user, positions);
+        if (resp != null) {
+            return resp;
         } else {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,

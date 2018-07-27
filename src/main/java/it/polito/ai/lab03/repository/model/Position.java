@@ -18,11 +18,8 @@ public class Position {
     private String userId;
     private String archiveId;
 
-    // boolean to search for rapresentation data (false) or real positions (true)
-    private boolean isRealPosition;
-
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-        private GeoJsonPoint location;
+    private GeoJsonPoint location;
 
     public String getUserId() { return userId; }
 
@@ -34,10 +31,21 @@ public class Position {
         this.location = new GeoJsonPoint(0, 0);
     }
 
-    public Position(GeoJsonPoint point, long timestamp, boolean isRealPosition) {
+    public Position(GeoJsonPoint point, long timestamp) {
         this.timestamp = timestamp;
         this.location = point;
-        this.isRealPosition = isRealPosition;
+    }
+
+    public Position(String userId, String archiveId, GeoJsonPoint location) {
+        this.userId = userId;
+        this.archiveId = archiveId;
+        this.location = location;
+    }
+
+    public Position(String userId, String archiveId, long timestamp) {
+        this.userId = userId;
+        this.archiveId = archiveId;
+        this.timestamp = timestamp;
     }
 
     public String getArchiveId() {
@@ -80,21 +88,12 @@ public class Position {
         this.location = location;
     }
 
-    public boolean isRealPosition() {
-        return isRealPosition;
-    }
-
-    public void setRealPosition(boolean realPosition) {
-        isRealPosition = realPosition;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Position)) return false;
         Position position = (Position) o;
         return timestamp == position.timestamp &&
-                isRealPosition == position.isRealPosition &&
                 Objects.equals(id, position.id) &&
                 Objects.equals(userId, position.userId) &&
                 Objects.equals(archiveId, position.archiveId) &&
@@ -103,7 +102,7 @@ public class Position {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, timestamp, userId, archiveId, isRealPosition, location);
+        return Objects.hash(id, timestamp, userId, archiveId, location);
     }
 
     @Override
@@ -113,7 +112,6 @@ public class Position {
                 ", timestamp=" + timestamp +
                 ", userId='" + userId + '\'' +
                 ", archiveId='" + archiveId + '\'' +
-                ", isRealPosition=" + isRealPosition +
                 ", location=" + location +
                 '}';
     }
