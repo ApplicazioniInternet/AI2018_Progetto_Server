@@ -27,7 +27,7 @@ public class Constants {
     static final double validValueUpperBoundLongitude = 180;
     static final double validValueLowerBoundLatitude = -90;
     static final double validValueUpperBoundLatitude = 90;
-    static final long minTimestamp = 1522000000;
+    static final long minTimestamp = 1000000000;
     static final double MAX_SPEED = 100;
 
     //Il prezzo dell'acquisto di una singola position per ora lo metterei costante

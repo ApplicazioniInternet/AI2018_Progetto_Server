@@ -93,7 +93,13 @@ public class ArchiveService {
         username = user.getUsername();
         userId = user.getId();
         ps = positions.getPositions();
-
+        Collections.sort(ps, (o1, o2) ->
+            {
+                if (o1.getTimestamp() - o2.getTimestamp() >= 0)
+                    return 1;
+                else
+                    return -1;
+            });
         for (int i = 0; i < ps.size(); i++) {
             Position position = ps.get(i);
             position.setUserId(username);

@@ -20,14 +20,20 @@ public class PositionValidator {
     }
 
     public boolean isValidPosition(Position postedPosition, String username) {
-        double speed = 0;
         long maxTimestamp = (System.currentTimeMillis() / 1000L);
+        double speed = 0;
+        double distance;
 
         Position lastPosition = getLastPositionUser(username); // Prendo l'ultima posizione inseritaci dallo user
 
         if (lastPosition != null) {
-            double distance = PositionUtils.getDistanceBetween(lastPosition, postedPosition); // Calcolo la distanza tra le due e poi la velocità
-            speed = (distance * 1000) / (postedPosition.getTimestamp() - lastPosition.getTimestamp()); // Perché il timestamp è in millisecondi!!! La formula ritorna i KM
+            // se metto una posizione con timestamp passato all'ultima inserita --> errore
+            if (lastPosition.getTimestamp() > postedPosition.getTimestamp()) {
+                return false;
+            } else if (lastPosition.getTimestamp() != postedPosition.getTimestamp()) { // se la pos ha stesso timestamp la velocità rimane 0
+                distance = PositionUtils.getDistanceBetween(lastPosition, postedPosition); // Calcolo la distanza tra le due e poi la velocità
+                speed = (distance * 1000) / (postedPosition.getTimestamp() - lastPosition.getTimestamp()); // il timestamp è in secondi, La formula ritorna i KM
+            }
         }
 
         /*
