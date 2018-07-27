@@ -26,16 +26,5 @@ public class PositionRepresentationTimestamp extends Position {
         this.positionId = positionId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PositionRepresentationTimestamp)) return false;
-        PositionRepresentationTimestamp that = (PositionRepresentationTimestamp) o;
-        return Objects.equals(getTimestamp(), that.getTimestamp());
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), positionId);
-    }
 }

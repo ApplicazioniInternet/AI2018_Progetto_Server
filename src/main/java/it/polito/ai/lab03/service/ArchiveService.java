@@ -6,11 +6,10 @@ import it.polito.ai.lab03.repository.PositionRepresentationTimestampRepository;
 import it.polito.ai.lab03.repository.TransactionRepository;
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.Archive;
-import it.polito.ai.lab03.utils.Constants;
-import it.polito.ai.lab03.utils.PositionValidator;
-import it.polito.ai.lab03.utils.StringResponse;
+import it.polito.ai.lab03.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -77,9 +76,12 @@ public class ArchiveService {
         return archives;
     }
 
+    @Transactional
     public StringResponse uploadArchive(User user, Positions positions) {
-        TreeSet<PositionRepresentationCoordinates> representationsByCoordinates = new TreeSet<>();
-        TreeSet<PositionRepresentationTimestamp> representationsByTime = new TreeSet<>();
+        TreeSet<PositionRepresentationCoordinates>
+                representationsByCoordinates = new TreeSet<>(new ReprCoordComparator());
+        TreeSet<PositionRepresentationTimestamp>
+                representationsByTime = new TreeSet<>(new ReprTimeComparator());
         List<Position> positionsToAdd = new ArrayList<>();
         List<String> positionsId = new ArrayList<>();
         List<Position> ps;
