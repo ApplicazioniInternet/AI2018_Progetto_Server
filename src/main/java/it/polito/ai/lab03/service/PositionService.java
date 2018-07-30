@@ -57,6 +57,14 @@ public class PositionService {
                 );
     }
 
+    public List<Position> getPositionsByArchiveId(String id) {
+        return positionRepository.findPositionsByArchiveId(id);
+    }
+
+    public void save(Position position) {
+        positionRepository.save(position);
+    }
+
     /*public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {
         List<Position> positions = getPositionsInArea(locationRequest);
         System.err.println(locationRequest.toString());

@@ -23,24 +23,19 @@ public class ArchiveService {
     private ArchiveRepository archiveRepository;
     private TransactionRepository transactionRepository;
     private PositionValidator positionValidator;
-    private UserDetailsServiceImpl userDetailsService;
     private PositionRepresentationCoordinatesRepository posRepresRepoCoord;
     private PositionRepresentationTimestampRepository posRepresRepoTime;
 
     @Autowired
-    public ArchiveService(PositionService ps, ArchiveRepository ar,
-                          PositionValidator pv, UserDetailsServiceImpl uds,
-                          TransactionRepository tr,
+    public ArchiveService(PositionService ps, ArchiveRepository ar, PositionValidator pv, TransactionRepository tr,
                           PositionRepresentationCoordinatesRepository prrc,
                           PositionRepresentationTimestampRepository prrt) {
         this.archiveRepository = ar;
         this.positionService = ps;
         this.positionValidator = pv;
         this.transactionRepository = tr;
-        this.userDetailsService = uds;
         this.posRepresRepoCoord = prrc;
         this.posRepresRepoTime = prrt;
-
     }
 
     public List<Archive> getAll() {
@@ -93,6 +88,8 @@ public class ArchiveService {
         username = user.getUsername();
         userId = user.getId();
         ps = positions.getPositions();
+
+        // ordino e per validare le posizioni inserite
         Collections.sort(ps, (o1, o2) ->
             {
                 if (o1.getTimestamp() - o2.getTimestamp() >= 0)
@@ -130,6 +127,7 @@ public class ArchiveService {
                 // creazione archivio e set di id archivio in posizione
                 Position position = positionsToAdd.get(i);
                 position.setArchiveId(archiveId);
+                positionService.save(position);
 
                 // aggiungo ai treeset di timestamp e coord -> ordino e filtro
                 representationsByCoordinates.add(
@@ -156,6 +154,30 @@ public class ArchiveService {
 
         // no pos added
         return null;
+    }
+
+    public List<Position> getPositionsByArchiveId(String id) {
+        return positionService.getPositionsByArchiveId(id);
+    }
+
+    public long deleteArchiveById(String archiveId) {
+        return archiveRepository.deleteArchiveById(archiveId);
+    }
+
+    public ArchiveDownload getArchiveDownloadById(String archiveId) {
+        Archive archive = archiveRepository.findArchiveById(archiveId);
+        List<Position> archivePositions = positionService.getPositionsByArchiveId(archive.getId());
+        List<PositionDownload> positionsDownload = new ArrayList<>();
+
+        archivePositions.forEach(
+                p -> positionsDownload.add(new PositionDownload(p.getId(), p.getLocation(), p.getTimestamp()))
+        );
+
+        return new ArchiveDownload(
+                archiveId,
+                archive.getUserId(),
+                positionsDownload
+        );
     }
 
     /*public List<Archive> buyArchivesInArea(AreaRequest locationRequest, String buyer) {

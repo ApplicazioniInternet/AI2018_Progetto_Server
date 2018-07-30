@@ -1,10 +1,6 @@
 package it.polito.ai.lab03.repository.model;
 
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -22,6 +18,7 @@ public class Archive {
         this.userId = userId;
         this.positionIds = positionIds;
     }
+
     public String getId() {
         return id;
     }

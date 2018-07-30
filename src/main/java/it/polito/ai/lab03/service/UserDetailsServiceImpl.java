@@ -33,6 +33,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         throw new UsernameNotFoundException(username);
     }
 
+    public String getIdByUsername (String username) {
+        return userRepository.findByUsername(username).getId();
+    }
+
     public List<User> getAll() {
         return userRepository.findAll();
     }

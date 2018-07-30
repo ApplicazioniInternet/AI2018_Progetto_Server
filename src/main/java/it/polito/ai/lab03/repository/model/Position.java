@@ -21,7 +21,9 @@ public class Position {
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint location;
 
-    public String getUserId() { return userId; }
+    public String getUserId() {
+        return userId;
+    }
 
     public void setUserId(String userId) {
         this.userId = userId;
@@ -80,7 +82,7 @@ public class Position {
         return timestamp;
     }
 
-    private GeoJsonPoint getLocation() {
+    public GeoJsonPoint getLocation() {
         return location;
     }
 
