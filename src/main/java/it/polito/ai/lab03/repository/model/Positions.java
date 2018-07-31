@@ -9,10 +9,6 @@ public class Positions {
     @JsonProperty("positions")
     private List<Position> positions;
 
-    public Positions(List<Position> positions) {
-        this.positions = positions;
-    }
-
     public List<Position> getPositions() {
         return positions;
     }

@@ -1,18 +1,15 @@
 package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.PositionRepository;
-import it.polito.ai.lab03.repository.TransactionRepository;
-import it.polito.ai.lab03.repository.model.AreaRequest;
-import it.polito.ai.lab03.repository.model.Position;
-import it.polito.ai.lab03.repository.model.Transaction;
-import it.polito.ai.lab03.utils.Constants;
+import it.polito.ai.lab03.repository.model.*;
+import it.polito.ai.lab03.utils.ReprCoordComparator;
+import it.polito.ai.lab03.utils.ReprTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.TreeSet;
 
 @Service
 public class PositionService {
@@ -20,26 +17,31 @@ public class PositionService {
     private PositionRepository positionRepository;
 
     @Autowired
-    public PositionService(PositionRepository pr) {
+    public PositionService(PositionRepository pr)
+    {
         this.positionRepository = pr;
 
     }
 
-    public String insertPosition(Position position) {
+    public String insertPosition(Position position)
+    {
         positionRepository.insert(position);
         return position.getId();
     }
 
 
-    public List<Position> getAll() {
+    public List<Position> getAll()
+    {
         return positionRepository.findAll();
     }
 
-    public List<Position> getPositionsForUser(String user) {
-        return positionRepository.findPositionsByUserId(user);
+    public List<Position> getPositionsByUserId(String userId)
+    {
+        return positionRepository.findPositionsByUserId(userId);
     }
 
-    private List<Position> getPositionsInArea(AreaRequest locationRequest) {
+    private List<Position> getPositionsInArea(AreaRequest locationRequest)
+    {
         return positionRepository
                 .findByLocationIsWithinAndTimestampBetween(
                         locationRequest.getArea(),
@@ -63,6 +65,27 @@ public class PositionService {
 
     public void save(Position position) {
         positionRepository.save(position);
+    }
+
+    public PositionRepresentationDownload getRepresentations(AreaRequest locationRequest) {
+        TreeSet<PositionRepresentationCoordinates>
+                representationsByCoordinates = new TreeSet<>(new ReprCoordComparator());
+        TreeSet<PositionRepresentationTimestamp>
+                representationsByTime = new TreeSet<>(new ReprTimeComparator());
+
+        List<Position> positionList = getPositionsInArea(locationRequest);
+
+        for (int i = 0; i < positionList.size(); i++) {
+            Position position = positionList.get(i);
+            // aggiungo ai treeset di timestamp e coord -> ordino e filtro
+            representationsByCoordinates.add(
+                    new PositionRepresentationCoordinates(position));
+            representationsByTime.add(
+                    new PositionRepresentationTimestamp(position));
+        }
+
+        return new PositionRepresentationDownload(representationsByCoordinates, representationsByTime);
+
     }
 
     /*public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {

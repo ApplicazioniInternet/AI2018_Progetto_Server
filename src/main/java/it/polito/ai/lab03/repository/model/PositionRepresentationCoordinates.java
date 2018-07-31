@@ -1,46 +1,59 @@
 package it.polito.ai.lab03.repository.model;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
 @Document(collection = "positionsReprCoord")
-public class PositionRepresentationCoordinates extends Position {
+public class PositionRepresentationCoordinates {
 
-    private String positionId;
+    private String userId;
+    private String archiveId;
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    private GeoJsonPoint location;
 
     public PositionRepresentationCoordinates(Position position) {
-        super(
-                position.getUserId(),
-                position.getArchiveId(),
-                new GeoJsonPoint(
-                        (double) Math.round( position.getLongitude() * 100 ) / 100,
-                        (double) Math.round( position.getLatitude() * 100 ) / 100
-                )
+        this.userId = position.getUserId();
+        this.archiveId = position.getArchiveId();
+        this.location = new GeoJsonPoint(
+                (double) Math.round( position.getLongitude() * 100 ) / 100,
+                (double) Math.round( position.getLatitude() * 100 ) / 100
         );
-        this.positionId = position.getId();
     }
 
-    public String getPositionId() {
-        return positionId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPositionId(String positionId) {
-        this.positionId = positionId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PositionRepresentationCoordinates)) return false;
-        PositionRepresentationCoordinates that = (PositionRepresentationCoordinates) o;
-        return Objects.equals(getLatitude(), that.getLatitude()) &&
-                Objects.equals(getLongitude(), that.getLongitude());
+    public String getArchiveId() {
+        return archiveId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), positionId);
+    public void setArchiveId(String archiveId) {
+        this.archiveId = archiveId;
+    }
+
+    public GeoJsonPoint getLocation() {
+        return location;
+    }
+
+    public void setLocation(GeoJsonPoint location) {
+        this.location = location;
+    }
+
+    public double getLatitude() {
+        return location.getY();
+    }
+
+    public double getLongitude() {
+        return location.getX();
     }
 }

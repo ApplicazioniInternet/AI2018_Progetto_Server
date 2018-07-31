@@ -1,14 +1,7 @@
 package it.polito.ai.lab03.controller;
 
-import it.polito.ai.lab03.repository.model.Archive;
-import it.polito.ai.lab03.repository.model.AreaRequest;
-import it.polito.ai.lab03.repository.model.Transaction;
 import it.polito.ai.lab03.repository.model.User;
-import it.polito.ai.lab03.service.ArchiveService;
-import it.polito.ai.lab03.service.PositionService;
-import it.polito.ai.lab03.service.TransactionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
-import it.polito.ai.lab03.utils.IAuthorizationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

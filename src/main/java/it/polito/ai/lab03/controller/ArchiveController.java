@@ -2,8 +2,6 @@ package it.polito.ai.lab03.controller;
 
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.service.ArchiveService;
-import it.polito.ai.lab03.service.PositionService;
-import it.polito.ai.lab03.service.TransactionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
 import it.polito.ai.lab03.utils.IAuthorizationFacade;
 import it.polito.ai.lab03.utils.StringResponse;
@@ -84,36 +82,10 @@ public class ArchiveController {
         } else {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "L'archivio inserito contiene solo posizioni invalide."
+                    "L'archivio inserito non contiene posizioni valide "
             );
         }
 
-    }
-
-    /**
-     * Questo metodo poichè ritorna una lista di posizioni dato un poligono, deve essere l'acquisto
-     * Due possibili ResponseStatus a seconda che lácquisto sia andato a buon fine o meno
-     */
-    @RequestMapping(
-            path = "/buy",
-            method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public @ResponseBody
-    List<Archive> getArchivesInArea(@RequestBody AreaRequest locationRequest) {
-        //Ricavo l'username per passarlo al service layer in modo da settare il buyer nella transazione
-        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
-        /*
-        Bisognerebbe verificare se la transazione è andata a buon fine e in caso contrario dare un messaggio di errore.
-        Possibili errori:
-        - area non valida (bad request)
-        - nessuna posizione in quell'area (si può anche tornare un ok e lista vuota)
-        - soldi non sufficienti per transazione (che errore? forse forbidden?)
-        - transazione fallita (internal server error)
-         */
-        List<String> archivesId = null/* todo populate archives*/;
-        return archiveService.buyArchives(archivesId, username);
     }
 
     /**

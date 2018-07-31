@@ -38,18 +38,6 @@ public class Position {
         this.location = point;
     }
 
-    public Position(String userId, String archiveId, GeoJsonPoint location) {
-        this.userId = userId;
-        this.archiveId = archiveId;
-        this.location = location;
-    }
-
-    public Position(String userId, String archiveId, long timestamp) {
-        this.userId = userId;
-        this.archiveId = archiveId;
-        this.timestamp = timestamp;
-    }
-
     public String getArchiveId() {
         return archiveId;
     }
