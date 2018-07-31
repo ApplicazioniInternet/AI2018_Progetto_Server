@@ -31,7 +31,7 @@ public class PositionController {
      */
     @RequestMapping(
             path = "/representations",
-            method = RequestMethod.GET,
+            method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseStatus(value = HttpStatus.OK)
