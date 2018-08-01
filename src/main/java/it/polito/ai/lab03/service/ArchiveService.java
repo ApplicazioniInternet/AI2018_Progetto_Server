@@ -88,7 +88,7 @@ public class ArchiveService {
             });
             for (int i = 0; i < ps.size(); i++) {
                 Position position = ps.get(i);
-                position.setUserId(username);
+                position.setUserId(userId);
                 // validazione posizione
                 condition = positionValidator.isValidPosition(position, username);
                 totCount++;

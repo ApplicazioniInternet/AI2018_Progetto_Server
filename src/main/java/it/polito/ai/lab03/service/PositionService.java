@@ -39,12 +39,22 @@ public class PositionService {
 
     private List<Position> getPositionsInArea(AreaRequest locationRequest)
     {
-        return positionRepository
-                .findByLocationIsWithinAndTimestampBetween(
-                        locationRequest.getArea(),
-                        locationRequest.getTimestampAfter(),
-                        locationRequest.getTimestampBefore()
-                );
+        if (locationRequest.getUserIds() == null) {
+            return positionRepository
+                    .findByLocationIsWithinAndTimestampBetween(
+                            locationRequest.getArea(),
+                            locationRequest.getTimestampAfter(),
+                            locationRequest.getTimestampBefore()
+                    );
+        } else {
+            return positionRepository
+                    .findByUserIdAndLocationIsWithinAndTimestampBetween(
+                            locationRequest.getUserIds(),
+                            locationRequest.getArea(),
+                            locationRequest.getTimestampAfter(),
+                            locationRequest.getTimestampBefore()
+                    );
+        }
     }
 
     public int getNumberPositionsInArea(AreaRequest locationRequest) {
@@ -69,6 +79,8 @@ public class PositionService {
                 representationsByCoordinates = new TreeSet<>();
         TreeSet<PositionRepresentationTimestamp>
                 representationsByTime = new TreeSet<>();
+
+        System.out.println(locationRequest.toString());
 
         List<Position> positionList = getPositionsInArea(locationRequest);
 
