@@ -1,23 +1,21 @@
 package it.polito.ai.lab03.repository.model;
 
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 
-public class PositionRepresentationCoordinates {
+import java.util.Objects;
+
+public class PositionRepresentationCoordinates
+        implements Comparable<PositionRepresentationCoordinates> {
 
     private String userId;
     private String archiveId;
-    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    private GeoJsonPoint location;
+    private double lng;
+    private double lat;
 
     public PositionRepresentationCoordinates(Position position) {
         this.userId = position.getUserId();
         this.archiveId = position.getArchiveId();
-        this.location = new GeoJsonPoint(
-                (double) Math.round( position.getLongitude() * 100 ) / 100,
-                (double) Math.round( position.getLatitude() * 100 ) / 100
-        );
+        this.lng = (double) Math.round( position.getLongitude() * 100 ) / 100;
+        this.lat = (double) Math.round( position.getLatitude() * 100 ) / 100;
     }
 
     public String getUserId() {
@@ -36,19 +34,54 @@ public class PositionRepresentationCoordinates {
         this.archiveId = archiveId;
     }
 
-    public GeoJsonPoint getLocation() {
-        return location;
+    public double getLng() {
+        return lng;
     }
 
-    public void setLocation(GeoJsonPoint location) {
-        this.location = location;
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 
-    public double getLatitude() {
-        return location.getY();
+    public double getLat() {
+        return lat;
     }
 
-    public double getLongitude() {
-        return location.getX();
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PositionRepresentationCoordinates)) return false;
+        PositionRepresentationCoordinates that = (PositionRepresentationCoordinates) o;
+        return Double.compare(that.lng, lng) == 0 &&
+                Double.compare(that.lat, lat) == 0 &&
+                Objects.equals(userId, that.userId) &&
+                Objects.equals(archiveId, that.archiveId);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(userId, archiveId, lng, lat);
+    }
+
+    public int compareTo(PositionRepresentationCoordinates that){
+        if ( !(Objects.equals(userId, that.userId)) ||
+                !(Objects.equals(archiveId, that.archiveId)))
+            return 1;
+
+        if (this.getLng() == that.getLng()) {
+            if (this.getLat() > that.getLat())
+                return 1;
+            else
+                return -1;
+        } else {
+            if (this.getLng() > that.getLng())
+                return 1;
+            else
+                return -1;
+        }
     }
 }

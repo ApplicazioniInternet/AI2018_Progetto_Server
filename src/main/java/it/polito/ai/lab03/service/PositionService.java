@@ -2,12 +2,9 @@ package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.PositionRepository;
 import it.polito.ai.lab03.repository.model.*;
-import it.polito.ai.lab03.utils.ReprCoordComparator;
-import it.polito.ai.lab03.utils.ReprTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -69,9 +66,9 @@ public class PositionService {
 
     public PositionRepresentationDownload getRepresentations(AreaRequest locationRequest) {
         TreeSet<PositionRepresentationCoordinates>
-                representationsByCoordinates = new TreeSet<>(new ReprCoordComparator());
+                representationsByCoordinates = new TreeSet<>();
         TreeSet<PositionRepresentationTimestamp>
-                representationsByTime = new TreeSet<>(new ReprTimeComparator());
+                representationsByTime = new TreeSet<>();
 
         List<Position> positionList = getPositionsInArea(locationRequest);
 
