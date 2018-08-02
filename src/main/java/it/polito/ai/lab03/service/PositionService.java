@@ -39,7 +39,7 @@ public class PositionService {
 
     private List<Position> getPositionsInArea(AreaRequest locationRequest)
     {
-        if (locationRequest.getUserIds() == null) {
+        if (locationRequest.getUserIds().isEmpty()) {
             return positionRepository
                     .findByLocationIsWithinAndTimestampBetween(
                             locationRequest.getArea(),
@@ -48,7 +48,7 @@ public class PositionService {
                     );
         } else {
             return positionRepository
-                    .findByUserIdAndLocationIsWithinAndTimestampBetween(
+                    .findByUserIdInAndLocationIsWithinAndTimestampBetween(
                             locationRequest.getUserIds(),
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
