@@ -49,7 +49,7 @@ public class ArchiveService {
         return toBeReturned;
     }
 
-    public String insertArchive(Archive archive) {
+    private String insertArchive(Archive archive) {
         archiveRepository.insert(archive);
         return archive.getId();
     }
@@ -79,24 +79,23 @@ public class ArchiveService {
 
         if (ps != null) {
             // ordino e per validare le posizioni inserite
-            Collections.sort(ps, (o1, o2) ->
+            ps.sort((o1, o2) ->
             {
                 if (o1.getTimestamp() - o2.getTimestamp() >= 0)
                     return 1;
                 else
                     return -1;
             });
-            for (int i = 0; i < ps.size(); i++) {
-                Position position = ps.get(i);
+            for (Position position : ps) {
                 position.setUserId(userId);
                 // validazione posizione
                 condition = positionValidator.isValidPosition(position, username);
                 totCount++;
-                /**
-                 * se valida aggiunta dell'id all'archivio
-                 * e della posizione vera (flag true)
-                 * e della sua rappresentazione (flag false)
-                 **/
+                /*
+                  se valida aggiunta dell'id all'archivio
+                  e della posizione vera (flag true)
+                  e della sua rappresentazione (flag false)
+                 */
                 if (condition) {
                     id = positionService.insertPosition(position);
                     if (id != null) {
@@ -111,9 +110,8 @@ public class ArchiveService {
             if (positionsId.size() > 0) {
                 Archive archive = new Archive(userId, positionsId);
                 String archiveId = insertArchive(archive);
-                for (int i = 0; i < positionsToAdd.size(); i++) {
+                for (Position position : positionsToAdd) {
                     // creazione archivio e set di id archivio in posizione
-                    Position position = positionsToAdd.get(i);
                     position.setArchiveId(archiveId);
                     positionService.save(position);
                 }
