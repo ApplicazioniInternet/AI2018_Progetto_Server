@@ -9,7 +9,8 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 
 @SuppressWarnings("ALL")
-public interface PositionRepository extends MongoRepository<Position, User> {
+public interface PositionRepository extends MongoRepository<Position, User>, PositionRepositoryCustom {
+    List<Position> findAll();
     Position findPositionsById(@NonNull String id);
     List<Position> findPositionsByUserId(@NonNull String userId);
     List<Position> findPositionsByArchiveId(@NonNull String archiveId);
@@ -20,6 +21,7 @@ public interface PositionRepository extends MongoRepository<Position, User> {
     Position insert(@NonNull Position position);
 
     int countByLocationIsWithinAndTimestampBetween(@NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
+    int countByUserIdInAndLocationIsWithinAndTimestampBetween(@NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
 
     List<Position> findByLocationIsWithinAndTimestampBetween(@NonNull GeoJsonPolygon area, @NonNull long timestampStart, @NonNull long timestampEnd);
     List<Position> findByUserIdInAndLocationIsWithinAndTimestampBetween(

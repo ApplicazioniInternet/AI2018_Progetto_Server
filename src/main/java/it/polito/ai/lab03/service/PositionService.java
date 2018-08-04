@@ -5,13 +5,24 @@ import it.polito.ai.lab03.repository.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 public class PositionService {
 
     private PositionRepository positionRepository;
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
 
     @Autowired
     public PositionService(PositionRepository pr)
@@ -57,13 +68,17 @@ public class PositionService {
         }
     }
 
-    public int getNumberPositionsInArea(AreaRequest locationRequest) {
+    public List<ArchiveId> getArchivesbyPositionsInArea(AreaRequest locationRequest) {
         return positionRepository
-                .countByLocationIsWithinAndTimestampBetween(
+                .findArchivesIdbyPositionsInArea(
                         locationRequest.getArea(),
                         locationRequest.getTimestampAfter(),
                         locationRequest.getTimestampBefore()
                 );
+    }
+
+    public int getArchivesCount(AreaRequest locationRequest) {
+        return getArchivesbyPositionsInArea(locationRequest).size();
     }
 
     public List<Position> getPositionsByArchiveId(String id) {
@@ -80,8 +95,6 @@ public class PositionService {
         TreeSet<PositionRepresentationTimestamp>
                 representationsByTime = new TreeSet<>();
 
-        System.out.println(locationRequest.toString());
-
         List<Position> positionList = getPositionsInArea(locationRequest);
 
         for (int i = 0; i < positionList.size(); i++) {
@@ -95,6 +108,25 @@ public class PositionService {
 
         return new PositionRepresentationDownload(representationsByCoordinates, representationsByTime);
 
+    }
+
+    public int getPositionsCount(AreaRequest locationRequest) {
+        if (locationRequest.getUserIds().isEmpty()) {
+            return positionRepository
+                    .countByLocationIsWithinAndTimestampBetween(
+                            locationRequest.getArea(),
+                            locationRequest.getTimestampAfter(),
+                            locationRequest.getTimestampBefore()
+                    );
+        } else {
+            return positionRepository
+                    .countByUserIdInAndLocationIsWithinAndTimestampBetween(
+                            locationRequest.getUserIds(),
+                            locationRequest.getArea(),
+                            locationRequest.getTimestampAfter(),
+                            locationRequest.getTimestampBefore()
+                    );
+        }
     }
 
     /*public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {

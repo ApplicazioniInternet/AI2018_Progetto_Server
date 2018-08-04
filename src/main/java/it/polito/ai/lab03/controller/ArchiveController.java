@@ -2,6 +2,7 @@ package it.polito.ai.lab03.controller;
 
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.service.ArchiveService;
+import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
 import it.polito.ai.lab03.utils.IAuthorizationFacade;
 import it.polito.ai.lab03.utils.StringResponse;
@@ -18,12 +19,15 @@ import java.util.List;
 public class ArchiveController {
 
     private ArchiveService archiveService;
+    private PositionService positionService;
     private IAuthorizationFacade authorizationFacade;
     private UserDetailsServiceImpl userService;
 
     @Autowired
-    public ArchiveController(ArchiveService as, UserDetailsServiceImpl uds, IAuthorizationFacade iaf) {
+    public ArchiveController(ArchiveService as, PositionService ps,
+                             UserDetailsServiceImpl uds, IAuthorizationFacade iaf) {
         this.archiveService = as;
+        this.positionService = ps;
         this.authorizationFacade = iaf;
         this.userService = uds;
     }
@@ -154,5 +158,33 @@ public class ArchiveController {
     public @ResponseBody
     ArchiveDownload downloadArchive(@PathVariable(value = "id") String archiveId) {
         return archiveService.getArchiveDownloadById(archiveId);
+    }
+
+    /**
+     * Questo metodo poichè ritorna una lista di rappresentazioni dato un poligono
+     */
+    @RequestMapping(
+            path = "/area/count",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    int getArchivesCount(@RequestBody AreaRequest locationRequest) {
+        return positionService.getArchivesCount(locationRequest);
+    }
+
+    /**
+     * Questo metodo poichè ritorna una lista di rappresentazioni dato un poligono
+     */
+    @RequestMapping(
+            path = "/area/list",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    List<ArchiveId> getArchivesList(@RequestBody AreaRequest locationRequest) {
+        return positionService.getArchivesbyPositionsInArea(locationRequest);
     }
 }

@@ -40,4 +40,17 @@ public class PositionController {
         return positionService.getRepresentations(locationRequest);
     }
 
+    /**
+     * Questo metodo poichè ritorna una lista di rappresentazioni dato un poligono
+     */
+    @RequestMapping(
+            path = "/area/count",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    int getArchiveCount(@RequestBody AreaRequest locationRequest) {
+        return positionService.getPositionsCount(locationRequest);
+    }
 }
