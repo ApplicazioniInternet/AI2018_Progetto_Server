@@ -1,4 +1,4 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.archive;
 
 public class ArchiveId {
     private String archiveId;

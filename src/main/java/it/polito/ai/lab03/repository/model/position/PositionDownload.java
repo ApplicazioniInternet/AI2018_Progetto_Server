@@ -1,9 +1,6 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.position;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
-import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 
 public class PositionDownload {
 

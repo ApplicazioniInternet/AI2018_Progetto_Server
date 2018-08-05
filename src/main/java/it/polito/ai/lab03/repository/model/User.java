@@ -1,5 +1,6 @@
 package it.polito.ai.lab03.repository.model;
 
+import it.polito.ai.lab03.repository.model.position.Position;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;

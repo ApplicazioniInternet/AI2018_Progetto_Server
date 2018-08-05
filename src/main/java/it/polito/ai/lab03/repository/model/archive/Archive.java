@@ -1,6 +1,8 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.archive;
 
+import it.polito.ai.lab03.repository.model.position.Position;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -12,11 +14,13 @@ public class Archive {
     @Id
     private String id;
     private String userId;
-    private List<String> positionIds;
+    @DBRef private List<Position> positions;
+    private boolean onSale;
 
-    public Archive(String userId, List<String> positionIds) {
+    public Archive(String userId, List<Position> positions) {
         this.userId = userId;
-        this.positionIds = positionIds;
+        this.positions = positions;
+        this.onSale = true;
     }
 
     public String getId() {
@@ -35,12 +39,20 @@ public class Archive {
         this.userId = userId;
     }
 
-    public List<String> getPositionIds() {
-        return positionIds;
+    public List<Position> getPositions() {
+        return positions;
     }
 
-    public void setPositionIds(List<String> positionIds) {
-        this.positionIds = positionIds;
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
+    }
+
+    public boolean isOnSale() {
+        return onSale;
+    }
+
+    public void setOnSale(boolean onSale) {
+        this.onSale = onSale;
     }
 
     @Override
@@ -50,12 +62,12 @@ public class Archive {
         Archive archive = (Archive) o;
         return Objects.equals(id, archive.id) &&
                 Objects.equals(userId, archive.userId) &&
-                Objects.equals(positionIds, archive.positionIds);
+                Objects.equals(positions, archive.positions);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, userId, positionIds);
+        return Objects.hash(id, userId, positions);
     }
 }

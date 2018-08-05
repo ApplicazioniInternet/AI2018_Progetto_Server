@@ -1,5 +1,6 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.archive;
 
+import it.polito.ai.lab03.repository.model.position.PositionDownload;
 import org.springframework.data.annotation.Id;
 
 import java.util.List;

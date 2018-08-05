@@ -1,6 +1,6 @@
 package it.polito.ai.lab03.repository;
 
-import it.polito.ai.lab03.repository.model.ArchiveId;
+import it.polito.ai.lab03.repository.model.archive.ArchiveId;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.lang.NonNull;
 

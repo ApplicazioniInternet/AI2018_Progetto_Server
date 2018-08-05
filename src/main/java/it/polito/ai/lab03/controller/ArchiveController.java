@@ -1,6 +1,11 @@
 package it.polito.ai.lab03.controller;
 
 import it.polito.ai.lab03.repository.model.*;
+import it.polito.ai.lab03.repository.model.archive.Archive;
+import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
+import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.position.Position;
+import it.polito.ai.lab03.repository.model.position.Positions;
 import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
@@ -139,7 +144,7 @@ public class ArchiveController {
     )
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    long deleteArchive(@PathVariable(value = "id") String archiveId) {
+    boolean deleteArchive(@PathVariable(value = "id") String archiveId) {
         return archiveService.deleteArchiveById(archiveId);
     }
 

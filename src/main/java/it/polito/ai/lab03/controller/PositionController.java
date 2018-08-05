@@ -1,6 +1,7 @@
 package it.polito.ai.lab03.controller;
 
 import it.polito.ai.lab03.repository.model.*;
+import it.polito.ai.lab03.repository.model.position.PositionRepresentationDownload;
 import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
 import it.polito.ai.lab03.utils.IAuthorizationFacade;
@@ -8,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/secured/positions")

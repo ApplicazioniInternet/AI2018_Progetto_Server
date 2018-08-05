@@ -1,4 +1,4 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.position;
 
 import java.util.Objects;
 

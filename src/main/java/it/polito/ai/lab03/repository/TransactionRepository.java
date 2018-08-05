@@ -11,10 +11,6 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
     List<Transaction> findAllByBuyerId(@NonNull String buyerId);
-
-    List<Transaction> findAllBySellerId(@NonNull String sellerId);
-
     List<Transaction> findAllByTimestampBefore(@NonNull long timestampBefore);
-
     Transaction insert(@NonNull Transaction transaction);
 }

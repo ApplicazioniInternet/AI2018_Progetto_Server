@@ -1,7 +1,7 @@
 package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.UserRepository;
-import it.polito.ai.lab03.repository.model.Position;
+import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;

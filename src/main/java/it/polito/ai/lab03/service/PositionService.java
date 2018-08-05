@@ -2,17 +2,20 @@ package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.PositionRepository;
 import it.polito.ai.lab03.repository.model.*;
+import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.position.Position;
+import it.polito.ai.lab03.repository.model.position.PositionRepresentationCoordinates;
+import it.polito.ai.lab03.repository.model.position.PositionRepresentationDownload;
+import it.polito.ai.lab03.repository.model.position.PositionRepresentationTimestamp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 public class PositionService {
@@ -52,14 +55,14 @@ public class PositionService {
     {
         if (locationRequest.getUserIds().isEmpty()) {
             return positionRepository
-                    .findByLocationIsWithinAndTimestampBetween(
+                    .findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
                             locationRequest.getTimestampBefore()
                     );
         } else {
             return positionRepository
-                    .findByUserIdInAndLocationIsWithinAndTimestampBetween(
+                    .findByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getUserIds(),
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
@@ -79,10 +82,6 @@ public class PositionService {
 
     public int getArchivesCount(AreaRequest locationRequest) {
         return getArchivesbyPositionsInArea(locationRequest).size();
-    }
-
-    public List<Position> getPositionsByArchiveId(String id) {
-        return positionRepository.findPositionsByArchiveId(id);
     }
 
     public void save(Position position) {
@@ -113,14 +112,14 @@ public class PositionService {
     public int getPositionsCount(AreaRequest locationRequest) {
         if (locationRequest.getUserIds().isEmpty()) {
             return positionRepository
-                    .countByLocationIsWithinAndTimestampBetween(
+                    .countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
                             locationRequest.getTimestampBefore()
                     );
         } else {
             return positionRepository
-                    .countByUserIdInAndLocationIsWithinAndTimestampBetween(
+                    .countByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getUserIds(),
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),

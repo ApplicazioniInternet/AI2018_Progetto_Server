@@ -1,4 +1,4 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.position;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -13,21 +13,12 @@ public class Position {
 
     @Id
     private String id;
-
     private long timestamp;
     private String userId;
     private String archiveId;
-
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     private GeoJsonPoint location;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    private boolean onSale;
 
     public Position() {
         this.location = new GeoJsonPoint(0, 0);
@@ -36,6 +27,14 @@ public class Position {
     public Position(GeoJsonPoint point, long timestamp) {
         this.timestamp = timestamp;
         this.location = point;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getArchiveId() {
@@ -76,6 +75,14 @@ public class Position {
 
     public void setLocation(GeoJsonPoint location) {
         this.location = location;
+    }
+
+    public boolean isOnSale() {
+        return onSale;
+    }
+
+    public void setOnSale(boolean onSale) {
+        this.onSale = onSale;
     }
 
     @Override

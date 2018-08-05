@@ -1,6 +1,6 @@
 package it.polito.ai.lab03.repository;
 
-import it.polito.ai.lab03.repository.model.Position;
+import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.User;
 import org.springframework.data.mongodb.core.geo.GeoJsonPolygon;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,22 +11,16 @@ import java.util.List;
 @SuppressWarnings("ALL")
 public interface PositionRepository extends MongoRepository<Position, User>, PositionRepositoryCustom {
     List<Position> findAll();
+    Position insert(@NonNull Position position);
     Position findPositionsById(@NonNull String id);
     List<Position> findPositionsByUserId(@NonNull String userId);
-    List<Position> findPositionsByArchiveId(@NonNull String archiveId);
-    List<Position> findPositionsByLatitudeAndLongitude(@NonNull double latitude, @NonNull double longitude);
-    List<Position> findPositionsByTimestampAfter(@NonNull long timestamp);
-    List<Position> findPositionsByTimestampBefore(@NonNull long timestamp);
-    List<Position> findPositionsByTimestampBeforeAndTimestampAfter(@NonNull long t1, @NonNull long t2);
-    Position insert(@NonNull Position position);
 
-    int countByLocationIsWithinAndTimestampBetween(@NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
-    int countByUserIdInAndLocationIsWithinAndTimestampBetween(@NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
+    int countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(@NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
+    int countByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(@NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
 
-    List<Position> findByLocationIsWithinAndTimestampBetween(@NonNull GeoJsonPolygon area, @NonNull long timestampStart, @NonNull long timestampEnd);
-    List<Position> findByUserIdInAndLocationIsWithinAndTimestampBetween(
+    List<Position> findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
+            @NonNull GeoJsonPolygon area, @NonNull long timestampStart, @NonNull long timestampEnd);
+    List<Position> findByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
             @NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull long timestampStart,
             @NonNull long timestampEnd);
-    Position deletePositionById(@NonNull String positionId);
-    List<Position> deletePositionByUserId(@NonNull String userId);
 }

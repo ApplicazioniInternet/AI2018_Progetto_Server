@@ -3,7 +3,11 @@ package it.polito.ai.lab03.service;
 import it.polito.ai.lab03.repository.ArchiveRepository;
 import it.polito.ai.lab03.repository.TransactionRepository;
 import it.polito.ai.lab03.repository.model.*;
-import it.polito.ai.lab03.repository.model.Archive;
+import it.polito.ai.lab03.repository.model.archive.Archive;
+import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
+import it.polito.ai.lab03.repository.model.position.Position;
+import it.polito.ai.lab03.repository.model.position.PositionDownload;
+import it.polito.ai.lab03.repository.model.position.Positions;
 import it.polito.ai.lab03.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,17 +39,13 @@ public class ArchiveService {
     }
 
     public List<Archive> getArchivesForUser(String user) {
-        return archiveRepository.findArchivesByUserId(user);
+        return archiveRepository.findArchivesByUserIdAndOnSale(user, true);
     }
 
     public List<Archive> getArchivesBoughtCustomer(String user) {
         List<Archive> toBeReturned = new ArrayList<>();
         this.transactionRepository.findAllByBuyerId(user)
-                .stream().map(Transaction::getArchiveBought)
-                .forEach(archive -> {
-                    toBeReturned.add(archive);
-                    System.err.println(archive);
-                });
+                .stream().map(Transaction::getArchivesBought);
         return toBeReturned;
     }
 
@@ -65,8 +65,6 @@ public class ArchiveService {
 
     @Transactional
     public StringResponse uploadArchive(User user, Positions positions) {
-        List<Position> positionsToAdd = new ArrayList<>();
-        List<String> positionsId = new ArrayList<>();
         List<Position> ps;
 
         String id, username, userId;
@@ -100,19 +98,20 @@ public class ArchiveService {
                     id = positionService.insertPosition(position);
                     if (id != null) {
                         count++;
-                        positionsId.add(id);
-                        positionsToAdd.add(position);
                     }
+                } else {
+                    ps.remove(position);
                 }
             }
 
             // se c'è almeno una pos valida creo archivio se no exception
-            if (positionsId.size() > 0) {
-                Archive archive = new Archive(userId, positionsId);
+            if (count > 0) {
+                Archive archive = new Archive(userId, ps);
                 String archiveId = insertArchive(archive);
-                for (Position position : positionsToAdd) {
+                for (Position position : ps) {
                     // creazione archivio e set di id archivio in posizione
                     position.setArchiveId(archiveId);
+                    position.setOnSale(true);
                     positionService.save(position);
                 }
 
@@ -125,16 +124,29 @@ public class ArchiveService {
     }
 
     public List<Position> getPositionsByArchiveId(String id) {
-        return positionService.getPositionsByArchiveId(id);
+        return archiveRepository.findArchiveById(id).getPositions();
     }
 
-    public long deleteArchiveById(String archiveId) {
-        return archiveRepository.deleteArchiveById(archiveId);
+    public boolean deleteArchiveById(String archiveId) {
+        Archive archive = archiveRepository.findArchiveById(archiveId);
+        // set not on sale for the archive
+        archive.setOnSale(false);
+        archiveRepository.save(archive);
+
+        List<Position> positions = archive.getPositions();
+        // set on sae false for all positions in archive
+        for (Position position : positions) {
+            position.setArchiveId(archiveId);
+            position.setOnSale(false);
+            positionService.save(position);
+        }
+
+        return true;
     }
 
     public ArchiveDownload getArchiveDownloadById(String archiveId) {
         Archive archive = archiveRepository.findArchiveById(archiveId);
-        List<Position> archivePositions = positionService.getPositionsByArchiveId(archive.getId());
+        List<Position> archivePositions = archive.getPositions();
         List<PositionDownload> positionsDownload = new ArrayList<>();
 
         archivePositions.forEach(

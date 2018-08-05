@@ -1,7 +1,7 @@
 package it.polito.ai.lab03.repository;
 
-import it.polito.ai.lab03.repository.model.ArchiveId;
-import it.polito.ai.lab03.repository.model.Position;
+import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.position.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -36,6 +36,7 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
 
         Aggregation agg = newAggregation(
                 match(Criteria.where("location").within(area)
+                        .and("onsale").is(true)
                         .and("timestamp").gte(timestampStart).lte(timestampEnd)),
                 group("archiveId"),
                 project("_id").and("archiveId").previousOperation()
