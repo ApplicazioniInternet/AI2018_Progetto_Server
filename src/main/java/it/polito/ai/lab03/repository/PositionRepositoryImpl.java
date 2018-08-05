@@ -36,7 +36,7 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
 
         Aggregation agg = newAggregation(
                 match(Criteria.where("location").within(area)
-                        .and("onsale").is(true)
+                        .and("onSale").is(true)
                         .and("timestamp").gte(timestampStart).lte(timestampEnd)),
                 group("archiveId"),
                 project("_id").and("archiveId").previousOperation()

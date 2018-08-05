@@ -11,11 +11,10 @@ import java.util.Objects;
 @Document(collection = "archives")
 public class Archive {
 
-    @Id
-    private String id;
+    @Id private String id;
     private String userId;
-    @DBRef private List<Position> positions;
     private boolean onSale;
+    @DBRef private List<Position> positions;
 
     public Archive(String userId, List<Position> positions) {
         this.userId = userId;

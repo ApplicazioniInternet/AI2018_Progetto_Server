@@ -8,6 +8,7 @@ import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.PositionDownload;
 import it.polito.ai.lab03.repository.model.position.Positions;
+import it.polito.ai.lab03.repository.model.transaction.Transaction;
 import it.polito.ai.lab03.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -159,24 +160,4 @@ public class ArchiveService {
                 positionsDownload
         );
     }
-
-    /*public List<Archive> buyArchivesInArea(AreaRequest locationRequest, String buyer) {
-        List<Archive> archives = getArchivesInArea(locationRequest);
-        System.err.println(locationRequest.toString());
-        System.err.println("Archive in area: " + archives.size());
-        //Divido la lista di posizioni da acquistare in liste divise per owner
-        Map<String, List<Archive>> archivesListPerOwner = archives.stream()
-                .collect(Collectors.groupingBy(Archive::getUserId, Collectors.toList()));
-        //Per ogni utente diverso che possiede le archive che voglio comprare devo fare una transazione
-        for (String owner : archivesListPerOwner.keySet()) {
-            //Attualmente il prezzo penso sia sensato che sia costante * numero di posizioni acquistate
-            double pricePaid = Constants.priceSingleArchive * archivesListPerOwner.get(owner).size();
-            double revenueUser = Constants.percentageToUser * (Constants.priceSingleArchive * archivesListPerOwner.get(owner).size());
-            //Costruzione della transazione (id autogenerato dal DB)
-//            Transaction transaction = new Transaction(buyer, owner, archivesListPerOwner.get(owner), pricePaid, revenueUser, (System.currentTimeMillis() / 1000L));
-//            transactionRepository.insert(transaction);
-            //userDetailsService.updateByUsernameArchives(buyer, archivesListPerOwner.get(owner));
-        }
-        return archives;
-    }*/
 }

@@ -127,24 +127,4 @@ public class PositionService {
                     );
         }
     }
-
-    /*public List<Position> buyPositionsInArea(AreaRequest locationRequest, String buyer) {
-        List<Position> positions = getPositionsInArea(locationRequest);
-        System.err.println(locationRequest.toString());
-        System.err.println("Positions in area: " + positions.size());
-        //Divido la lista di posizioni da acquistare in liste divise per owner
-        Map<String, List<Position>> positionsListPerOwner = positions.stream()
-                .collect(Collectors.groupingBy(Position::getUserId, Collectors.toList()));
-        //Per ogni utente diverso che possiede le position che voglio comprare devo fare una transazione
-        for (String owner : positionsListPerOwner.keySet()) {
-            //Attualmente il prezzo penso sia sensato che sia costante * numero di posizioni acquistate
-            double pricePaid = Constants.priceSinglePosition * positionsListPerOwner.get(owner).size();
-            double revenueUser = Constants.percentageToUser * (Constants.priceSinglePosition * positionsListPerOwner.get(owner).size());
-            //Costruzione della transazione (id autogenerato dal DB)
-            Transaction transaction = new Transaction(buyer, owner, positionsListPerOwner.get(owner), pricePaid, revenueUser, (System.currentTimeMillis() / 1000L));
-            transactionRepository.insert(transaction);
-            //userDetailsService.updateByUsernamePositions(buyer, positionsListPerOwner.get(owner));
-        }
-        return positions;
-    }*/
 }

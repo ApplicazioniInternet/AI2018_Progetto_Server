@@ -4,10 +4,13 @@ import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.archive.Archive;
 import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
 import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.Positions;
+import it.polito.ai.lab03.repository.model.transaction.Transaction;
 import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
+import it.polito.ai.lab03.service.TransactionService;
 import it.polito.ai.lab03.service.UserDetailsServiceImpl;
 import it.polito.ai.lab03.utils.IAuthorizationFacade;
 import it.polito.ai.lab03.utils.StringResponse;
@@ -27,14 +30,17 @@ public class ArchiveController {
     private PositionService positionService;
     private IAuthorizationFacade authorizationFacade;
     private UserDetailsServiceImpl userService;
+    private TransactionService transactionService;
 
     @Autowired
     public ArchiveController(ArchiveService as, PositionService ps,
-                             UserDetailsServiceImpl uds, IAuthorizationFacade iaf) {
+                             UserDetailsServiceImpl uds, IAuthorizationFacade iaf,
+                             TransactionService ts) {
         this.archiveService = as;
         this.positionService = ps;
         this.authorizationFacade = iaf;
         this.userService = uds;
+        this.transactionService = ts;
     }
 
     /**
@@ -113,6 +119,21 @@ public class ArchiveController {
         return archiveService.getPositionsByArchiveId(id);
     }
 
+    /**
+     * Questo metodo poichè ritorna una lista di rappresentazioni dato un poligono
+     */
+    @RequestMapping(
+            path = "/buy",
+            method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    Transaction buyArchives(@RequestBody ArchiveIdsList archiveIdsList) {
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        return transactionService.buyArchives(archiveIdsList, userId);
+    }
 
     /**
      * Ritorna la lista degli archivi acquistati

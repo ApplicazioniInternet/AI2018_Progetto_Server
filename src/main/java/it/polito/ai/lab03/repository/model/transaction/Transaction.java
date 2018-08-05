@@ -1,23 +1,18 @@
-package it.polito.ai.lab03.repository.model;
+package it.polito.ai.lab03.repository.model.transaction;
 
-import it.polito.ai.lab03.repository.model.archive.Archive;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 @Document(collection = "transactions")
 public class Transaction {
 
-    @Id
     private String id;
     private String buyerId;
-    @DBRef private List<Archive> archivesBought;
+    private ArchiveIdsList archivesBought;
     private double pricePaid;
     private long timestamp;
 
-    public Transaction(String buyerId, List<Archive> archivesBought, double pricePaid, long timestamp) {
+    public Transaction(String buyerId, ArchiveIdsList archivesBought, double pricePaid, long timestamp) {
         this.buyerId = buyerId;
         this.archivesBought = archivesBought;
         this.pricePaid = pricePaid;
@@ -40,11 +35,11 @@ public class Transaction {
         this.buyerId = buyerId;
     }
 
-    public List<Archive> getArchivesBought() {
+    public ArchiveIdsList getArchivesBought() {
         return archivesBought;
     }
 
-    public void setArchivesBought(List<Archive> archivesBought) {
+    public void setArchivesBought(ArchiveIdsList archivesBought) {
         this.archivesBought = archivesBought;
     }
 
