@@ -65,6 +65,7 @@ public class ArchiveService {
     @Transactional
     public StringResponse uploadArchive(User user, Positions positions) {
         List<Position> ps;
+        List<Position> posToAdd = new ArrayList<>();
 
         String id, username, userId;
         int count = 0, totCount = 0;
@@ -86,7 +87,7 @@ public class ArchiveService {
             for (Position position : ps) {
                 position.setUserId(userId);
                 // validazione posizione
-                condition = positionValidator.isValidPosition(position, username);
+                condition = positionValidator.isValidPosition(position, userId);
                 totCount++;
                 /*
                   se valida aggiunta dell'id all'archivio
@@ -96,25 +97,24 @@ public class ArchiveService {
                 if (condition) {
                     id = positionService.insertPosition(position);
                     if (id != null) {
+                        posToAdd.add(position);
                         count++;
                     }
-                } else {
-                    ps.remove(position);
                 }
             }
 
             // se c'è almeno una pos valida creo archivio se no exception
             if (count > 0) {
-                Archive archive = new Archive(userId, ps);
+                Archive archive = new Archive(userId, posToAdd);
                 String archiveId = insertArchive(archive);
-                for (Position position : ps) {
+                for (Position position : posToAdd) {
                     // creazione archivio e set di id archivio in posizione
                     position.setArchiveId(archiveId);
                     position.setOnSale(true);
                     positionService.save(position);
                 }
 
-                return new StringResponse("Creato archivio con " + count + " posizioni valide su " + totCount);
+                return new StringResponse("Archive created with " + count + " valid positions out of " + totCount);
             }
         }
 
