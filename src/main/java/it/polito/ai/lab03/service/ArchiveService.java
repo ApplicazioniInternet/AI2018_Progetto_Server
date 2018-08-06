@@ -5,6 +5,7 @@ import it.polito.ai.lab03.repository.TransactionRepository;
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.archive.Archive;
 import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
+import it.polito.ai.lab03.repository.model.archive.ArchiveId;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.PositionDownload;
 import it.polito.ai.lab03.repository.model.position.Positions;
@@ -43,11 +44,17 @@ public class ArchiveService {
         return archiveRepository.findArchivesByUserIdAndOnSale(user, true);
     }
 
-    public List<Archive> getArchivesBoughtCustomer(String user) {
-        List<Archive> toBeReturned = new ArrayList<>();
-        this.transactionRepository.findAllByBuyerId(user)
-                .stream().map(Transaction::getArchivesBought);
-        return toBeReturned;
+    public List<Archive> getArchivesBoughtForUser(String userId) {
+        List<Transaction> transactions =  this.transactionRepository.findAllByBuyerId(userId);
+        List<Archive> archives = new ArrayList<>();
+        transactions.forEach(
+                transaction ->
+                    transaction.getArchivesBought().getArchiveIds().forEach(
+                            archiveId ->
+                                archives.add(archiveRepository.findArchiveById(archiveId.getArchiveId()))
+                            )
+                );
+        return archives;
     }
 
     private String insertArchive(Archive archive) {
@@ -119,36 +126,53 @@ public class ArchiveService {
         return archiveRepository.findArchiveById(id).getPositions();
     }
 
-    public boolean deleteArchiveById(String archiveId) {
+    public boolean deleteArchiveById(String archiveId, String userId) {
         Archive archive = archiveRepository.findArchiveById(archiveId);
-        // set not on sale for the archive
-        archive.setOnSale(false);
-        archiveRepository.save(archive);
+        if (archive.getUserId().equals(userId)) {
+            // set not on sale for the archive
+            archive.setOnSale(false);
+            archiveRepository.save(archive);
 
-        List<Position> positions = archive.getPositions();
-        // set on sae false for all positions in archive
-        for (Position position : positions) {
-            position.setArchiveId(archiveId);
-            position.setOnSale(false);
-            positionService.save(position);
+            List<Position> positions = archive.getPositions();
+            // set on sae false for all positions in archive
+            for (Position position : positions) {
+                position.setArchiveId(archiveId);
+                position.setOnSale(false);
+                positionService.save(position);
+            }
+            return true;
+        } else {
+            return false;
         }
-
-        return true;
     }
 
-    public ArchiveDownload getArchiveDownloadById(String archiveId) {
+    public ArchiveDownload getArchiveDownloadById(String archiveId, String userId) {
+        boolean allowed = false;
         Archive archive = archiveRepository.findArchiveById(archiveId);
-        List<Position> archivePositions = archive.getPositions();
-        List<PositionDownload> positionsDownload = new ArrayList<>();
 
-        archivePositions.forEach(
-                p -> positionsDownload.add(new PositionDownload(p.getId(), p.getLocation(), p.getTimestamp()))
-        );
+        if (archive.getUserId().equals(userId))
+            allowed = true;
+        else {
+            List<Transaction> trs = transactionRepository.
+                    findByBuyerIdAndArchivesBoughtArchiveIdsContains(userId, new ArchiveId(archiveId));
+            if (!(trs).isEmpty())
+                allowed = true;
+        }
 
-        return new ArchiveDownload(
-                archiveId,
-                archive.getUserId(),
-                positionsDownload
-        );
+        if (allowed) {
+            List<Position> archivePositions = archive.getPositions();
+            List<PositionDownload> positionsDownload = new ArrayList<>();
+
+            archivePositions.forEach(
+                    p -> positionsDownload.add(new PositionDownload(p.getId(), p.getLocation(), p.getTimestamp()))
+            );
+
+            return new ArchiveDownload(
+                    archiveId,
+                    archive.getUserId(),
+                    positionsDownload
+            );
+        } else
+            return null;
     }
 }

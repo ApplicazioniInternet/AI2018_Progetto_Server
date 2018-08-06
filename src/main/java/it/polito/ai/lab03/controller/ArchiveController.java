@@ -78,6 +78,23 @@ public class ArchiveController {
     }
 
     /**
+     * Funzione per ritornare tutte gli archivi associati ad un utente
+     *
+     * @param userId --> l'userId dell'utente specifico
+     * @return List<Archive> --> lista degli archivi associati a tale utente
+     */
+    @RequestMapping(
+            path = "purchased/user/{id}",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    List<Archive> getAllArchiveBoughtForUser(@PathVariable(value = "id") String userId) {
+        return archiveService.getArchivesBoughtForUser(userId);
+    }
+
+    /**
      * Funzione per aggiungere una posizione all'utente che possiede il token che ci viene dato con
      * la richiesta
      *
@@ -97,7 +114,7 @@ public class ArchiveController {
         } else {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "L'archivio inserito non contiene posizioni valide "
+                    "The archive does not contain valid positions"
             );
         }
 
@@ -136,23 +153,6 @@ public class ArchiveController {
     }
 
     /**
-     * Ritorna la lista degli archivi acquistati
-     *
-     * @param userId --> l'userId dell'utente specifico
-     * @return List<Archive> --> lista degli archivi acquistati da user con userId
-     */
-    @RequestMapping(
-            path = "/purchased/user/{id}",
-            method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    @ResponseStatus(value = HttpStatus.OK)
-    public @ResponseBody
-    List<Archive> getArchiveBought(@PathVariable(value = "id") String userId) {
-        return archiveService.getArchivesBoughtCustomer(userId);
-    }
-
-    /**
      * Ritorna l'archivio eliminato
      *
      * @param archiveId --> id dell'archivio da eliminare
@@ -165,8 +165,17 @@ public class ArchiveController {
     )
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    boolean deleteArchive(@PathVariable(value = "id") String archiveId) {
-        return archiveService.deleteArchiveById(archiveId);
+    StringResponse deleteArchive(@PathVariable(value = "id") String archiveId) {
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        if (archiveService.deleteArchiveById(archiveId, userId))
+            return new StringResponse("Archive deleted");
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Archive deletion is forbidden for users that are not the owner"
+            );
+        }
     }
 
     /**
@@ -183,7 +192,17 @@ public class ArchiveController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     ArchiveDownload downloadArchive(@PathVariable(value = "id") String archiveId) {
-        return archiveService.getArchiveDownloadById(archiveId);
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        ArchiveDownload ad = archiveService.getArchiveDownloadById(archiveId, userId);
+        if (ad != null)
+            return ad;
+        else {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Archive download is forbidden for users that are not the owner or buyers"
+            );
+        }
     }
 
     /**
