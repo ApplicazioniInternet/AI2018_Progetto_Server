@@ -2,7 +2,7 @@ package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.PositionRepository;
 import it.polito.ai.lab03.repository.model.*;
-import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLight;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.PositionRepresentationCoordinates;
 import it.polito.ai.lab03.repository.model.position.PositionRepresentationDownload;
@@ -73,7 +73,7 @@ public class PositionService {
         }
     }
 
-    public List<ArchiveId> getArchivesbyPositionsInArea(AreaRequest locationRequest, String userId) {
+    public List<ArchiveLight> getArchivesbyPositionsInArea(AreaRequest locationRequest, String userId) {
         return positionRepository
                 .findArchivesIdbyPositionsInArea(
                         locationRequest.getArea(),

@@ -1,6 +1,6 @@
 package it.polito.ai.lab03.repository.model.transaction;
 
-import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLightList;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,11 +9,11 @@ public class Transaction {
 
     @Id private String id;
     private String buyerId;
-    private ArchiveIdsList archivesBought;
+    private ArchiveLightList archivesBought;
     private double pricePaid;
     private long timestamp;
 
-    public Transaction(String buyerId, ArchiveIdsList archivesBought, double pricePaid, long timestamp) {
+    public Transaction(String buyerId, ArchiveLightList archivesBought, double pricePaid, long timestamp) {
         this.buyerId = buyerId;
         this.archivesBought = archivesBought;
         this.pricePaid = pricePaid;
@@ -36,11 +36,11 @@ public class Transaction {
         this.buyerId = buyerId;
     }
 
-    public ArchiveIdsList getArchivesBought() {
+    public ArchiveLightList getArchivesBought() {
         return archivesBought;
     }
 
-    public void setArchivesBought(ArchiveIdsList archivesBought) {
+    public void setArchivesBought(ArchiveLightList archivesBought) {
         this.archivesBought = archivesBought;
     }
 

@@ -1,6 +1,6 @@
 package it.polito.ai.lab03.repository;
 
-import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLight;
 import it.polito.ai.lab03.repository.model.position.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,16 +24,19 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
 
 
     private final MongoTemplate mongoTemplate;
+    private final TransactionRepository transactionRepository;
 
     @Autowired
-    public PositionRepositoryImpl(MongoTemplate mongoTemplate) {
+    public PositionRepositoryImpl(MongoTemplate mongoTemplate,
+                                  TransactionRepository tr) {
         this.mongoTemplate = mongoTemplate;
+        this.transactionRepository = tr;
     }
 
-    public List<ArchiveId> findArchivesIdbyPositionsInArea(@NonNull GeoJsonPolygon area,
-                                                           @NonNull long timestampStart,
-                                                           @NonNull long timestampEnd,
-                                                           @NonNull String userId) {
+    public List<ArchiveLight> findArchivesIdbyPositionsInArea(@NonNull GeoJsonPolygon area,
+                                                              @NonNull long timestampStart,
+                                                              @NonNull long timestampEnd,
+                                                              @NonNull String userId) {
 
         Aggregation agg = newAggregation(
                 match(Criteria.where("location").within(area)
@@ -44,10 +47,18 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
         );
 
         //Convert the aggregation result into a List
-        AggregationResults<ArchiveId> groupResults
-                = mongoTemplate.aggregate(agg, Position.class, ArchiveId.class);
+        AggregationResults<ArchiveLight> groupResults
+                = mongoTemplate.aggregate(agg, Position.class, ArchiveLight.class);
 
-        List<ArchiveId> result = groupResults.getMappedResults();
+        List<ArchiveLight> result = groupResults.getMappedResults();
+
+        result.forEach(
+                archiveId -> {
+                    if (transactionRepository.
+                            findByBuyerIdAndArchivesBoughtArchiveListContains(userId, archiveId) != null)
+                        archiveId.setBought(true);
+                }
+        );
 
         return result;
     }

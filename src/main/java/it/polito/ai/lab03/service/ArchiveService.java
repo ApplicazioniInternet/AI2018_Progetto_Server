@@ -5,7 +5,7 @@ import it.polito.ai.lab03.repository.TransactionRepository;
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.archive.Archive;
 import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
-import it.polito.ai.lab03.repository.model.archive.ArchiveId;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLight;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.PositionDownload;
 import it.polito.ai.lab03.repository.model.position.Positions;
@@ -49,9 +49,9 @@ public class ArchiveService {
         List<Archive> archives = new ArrayList<>();
         transactions.forEach(
                 transaction ->
-                    transaction.getArchivesBought().getArchiveIds().forEach(
-                            archiveId ->
-                                archives.add(archiveRepository.findArchiveById(archiveId.getArchiveId()))
+                    transaction.getArchivesBought().getArchiveList().forEach(
+                            archiveLight ->
+                                archives.add(archiveRepository.findArchiveById(archiveLight.getArchiveId()))
                             )
                 );
         return archives;
@@ -154,7 +154,7 @@ public class ArchiveService {
             allowed = true;
         else {
             List<Transaction> trs = transactionRepository.
-                    findByBuyerIdAndArchivesBoughtArchiveIdsContains(userId, new ArchiveId(archiveId));
+                    findByBuyerIdAndArchivesBoughtArchiveListContains(userId, new ArchiveLight(archiveId));
             if (!(trs).isEmpty())
                 allowed = true;
         }

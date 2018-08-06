@@ -3,8 +3,8 @@ package it.polito.ai.lab03.controller;
 import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.archive.Archive;
 import it.polito.ai.lab03.repository.model.archive.ArchiveDownload;
-import it.polito.ai.lab03.repository.model.archive.ArchiveId;
-import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLight;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLightList;
 import it.polito.ai.lab03.repository.model.position.Position;
 import it.polito.ai.lab03.repository.model.position.Positions;
 import it.polito.ai.lab03.repository.model.transaction.Transaction;
@@ -162,10 +162,10 @@ public class ArchiveController {
     )
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    Transaction buyArchives(@RequestBody ArchiveIdsList archiveIdsList) {
+    Transaction buyArchives(@RequestBody ArchiveLightList archiveLightList) {
         String username = authorizationFacade.getAuthorization().getPrincipal().toString();
         String userId = userService.getUser(username).getId();
-        return transactionService.buyArchives(archiveIdsList, userId);
+        return transactionService.buyArchives(archiveLightList, userId);
     }
 
     /**
@@ -247,7 +247,7 @@ public class ArchiveController {
     )
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
-    List<ArchiveId> getArchivesList(@RequestBody AreaRequest locationRequest) {
+    List<ArchiveLight> getArchivesList(@RequestBody AreaRequest locationRequest) {
         String username = authorizationFacade.getAuthorization().getPrincipal().toString();
         String userId = userService.getUser(username).getId();
         return positionService.getArchivesbyPositionsInArea(locationRequest, userId);

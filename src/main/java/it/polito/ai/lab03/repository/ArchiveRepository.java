@@ -2,7 +2,6 @@ package it.polito.ai.lab03.repository;
 
 import it.polito.ai.lab03.repository.model.archive.Archive;
 import it.polito.ai.lab03.repository.model.User;
-import it.polito.ai.lab03.repository.model.archive.ArchiveId;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.lang.NonNull;
 

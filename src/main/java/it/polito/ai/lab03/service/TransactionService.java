@@ -2,14 +2,16 @@ package it.polito.ai.lab03.service;
 
 import it.polito.ai.lab03.repository.ArchiveRepository;
 import it.polito.ai.lab03.repository.TransactionRepository;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLight;
 import it.polito.ai.lab03.repository.model.transaction.Transaction;
 import it.polito.ai.lab03.repository.model.archive.Archive;
-import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
+import it.polito.ai.lab03.repository.model.archive.ArchiveLightList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionService {
@@ -23,25 +25,15 @@ public class TransactionService {
         this.archiveRepository = ar;
     }
 
-    public List<Transaction> getTransactionsPerUser(String username) {
-        return transactionRepository.findAllByBuyerId(username);
-    }
-
-    void insert(Transaction transaction) {
-        transactionRepository.insert(transaction);
-    }
-
-
-    public Transaction buyArchives(ArchiveIdsList archiveIdsList, String buyerId) {
-
+    public Transaction buyArchives(ArchiveLightList archiveLightList, String buyerId) {
         //Costruzione della transazione (id autogenerato dal DB)
-        Transaction transaction = new Transaction(buyerId, archiveIdsList, 1, (System.currentTimeMillis() / 1000L));
+        Transaction transaction = new Transaction(buyerId, archiveLightList, 1, (System.currentTimeMillis() / 1000L));
         transactionRepository.insert(transaction);
 
         // segno in ogni archivio la lista di transaction in cui è stato acquistato
-        archiveIdsList.getArchiveIds().forEach(
-                archiveId -> {
-                    Archive archive = archiveRepository.findArchiveById(archiveId.getArchiveId());
+        archiveLightList.getArchiveList().forEach(
+                archiveLight -> {
+                    Archive archive = archiveRepository.findArchiveById(archiveLight.getArchiveId());
                     List<Transaction> transactions = archive.getTransactions();
                     if (transactions == null)
                         transactions = new ArrayList<>();
