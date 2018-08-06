@@ -1,10 +1,12 @@
 package it.polito.ai.lab03.repository.model.archive;
 
 import it.polito.ai.lab03.repository.model.position.Position;
+import it.polito.ai.lab03.repository.model.transaction.Transaction;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,11 +17,13 @@ public class Archive {
     private String userId;
     private boolean onSale;
     @DBRef private List<Position> positions;
+    @DBRef private List<Transaction> transactions;
 
     public Archive(String userId, List<Position> positions) {
         this.userId = userId;
         this.positions = positions;
         this.onSale = true;
+        this.transactions = new ArrayList<>();
     }
 
     public String getId() {
@@ -52,6 +56,14 @@ public class Archive {
 
     public void setOnSale(boolean onSale) {
         this.onSale = onSale;
+    }
+
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     @Override

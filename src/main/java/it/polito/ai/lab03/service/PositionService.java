@@ -51,16 +51,18 @@ public class PositionService {
         return positionRepository.findPositionsByUserId(userId);
     }
 
-    private List<Position> getPositionsInArea(AreaRequest locationRequest)
+    private List<Position> getPositionsInArea(AreaRequest locationRequest, String userId)
     {
         if (locationRequest.getUserIds().isEmpty()) {
             return positionRepository
-                    .findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
+                    .findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrueAndUserIdIsNot(
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
-                            locationRequest.getTimestampBefore()
+                            locationRequest.getTimestampBefore(),
+                            userId
                     );
         } else {
+            locationRequest.getUserIds().remove(userId);
             return positionRepository
                     .findByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getUserIds(),
@@ -71,30 +73,31 @@ public class PositionService {
         }
     }
 
-    public List<ArchiveId> getArchivesbyPositionsInArea(AreaRequest locationRequest) {
+    public List<ArchiveId> getArchivesbyPositionsInArea(AreaRequest locationRequest, String userId) {
         return positionRepository
                 .findArchivesIdbyPositionsInArea(
                         locationRequest.getArea(),
                         locationRequest.getTimestampAfter(),
-                        locationRequest.getTimestampBefore()
+                        locationRequest.getTimestampBefore(),
+                        userId
                 );
     }
 
-    public int getArchivesCount(AreaRequest locationRequest) {
-        return getArchivesbyPositionsInArea(locationRequest).size();
+    public int getArchivesCount(AreaRequest locationRequest, String userId) {
+        return getArchivesbyPositionsInArea(locationRequest, userId).size();
     }
 
     public void save(Position position) {
         positionRepository.save(position);
     }
 
-    public PositionRepresentationDownload getRepresentations(AreaRequest locationRequest) {
+    public PositionRepresentationDownload getRepresentations(AreaRequest locationRequest, String userId) {
         TreeSet<PositionRepresentationCoordinates>
                 representationsByCoordinates = new TreeSet<>();
         TreeSet<PositionRepresentationTimestamp>
                 representationsByTime = new TreeSet<>();
 
-        List<Position> positionList = getPositionsInArea(locationRequest);
+        List<Position> positionList = getPositionsInArea(locationRequest, userId);
 
         for (int i = 0; i < positionList.size(); i++) {
             Position position = positionList.get(i);
@@ -109,15 +112,17 @@ public class PositionService {
 
     }
 
-    public int getPositionsCount(AreaRequest locationRequest) {
+    public int getPositionsCount(AreaRequest locationRequest, String userId) {
         if (locationRequest.getUserIds().isEmpty()) {
             return positionRepository
-                    .countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
+                    .countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrueAndUserIdIsNot(
                             locationRequest.getArea(),
                             locationRequest.getTimestampAfter(),
-                            locationRequest.getTimestampBefore()
+                            locationRequest.getTimestampBefore(),
+                            userId
                     );
         } else {
+            locationRequest.getUserIds().remove(userId);
             return positionRepository
                     .countByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
                             locationRequest.getUserIds(),

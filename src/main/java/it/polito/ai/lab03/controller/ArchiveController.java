@@ -197,7 +197,9 @@ public class ArchiveController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     int getArchivesCount(@RequestBody AreaRequest locationRequest) {
-        return positionService.getArchivesCount(locationRequest);
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        return positionService.getArchivesCount(locationRequest, userId);
     }
 
     /**
@@ -211,6 +213,8 @@ public class ArchiveController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     List<ArchiveId> getArchivesList(@RequestBody AreaRequest locationRequest) {
-        return positionService.getArchivesbyPositionsInArea(locationRequest);
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        return positionService.getArchivesbyPositionsInArea(locationRequest, userId);
     }
 }

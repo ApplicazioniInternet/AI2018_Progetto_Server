@@ -10,5 +10,6 @@ public interface PositionRepositoryCustom {
 
     List<ArchiveId> findArchivesIdbyPositionsInArea(@NonNull GeoJsonPolygon area,
                                                       @NonNull long timestampStart,
-                                                      @NonNull long timestampEnd);
+                                                      @NonNull long timestampEnd,
+                                                      @NonNull String userId);
 }

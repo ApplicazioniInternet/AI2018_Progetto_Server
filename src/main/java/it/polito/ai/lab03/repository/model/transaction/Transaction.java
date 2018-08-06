@@ -1,12 +1,13 @@
 package it.polito.ai.lab03.repository.model.transaction;
 
 import it.polito.ai.lab03.repository.model.archive.ArchiveIdsList;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "transactions")
 public class Transaction {
 
-    private String id;
+    @Id private String id;
     private String buyerId;
     private ArchiveIdsList archivesBought;
     private double pricePaid;

@@ -37,18 +37,19 @@ public class TransactionService {
         //Costruzione della transazione (id autogenerato dal DB)
         Transaction transaction = new Transaction(buyerId, archiveIdsList, 1, (System.currentTimeMillis() / 1000L));
         transactionRepository.insert(transaction);
-//
-//        // segno in ogni archivio la lista di transaction in cui è stato acquistato
-//        archives.forEach(
-//                archive -> {
-//                    List<Transaction> transactions = archive.getTransactions();
-//                    if (transactions == null)
-//                        transactions = new ArrayList<>();
-//                    transactions.add(transaction);
-//                    archive.setTransactions(transactions);
-//                    archiveRepository.save(archive);
-//                }
-//        );
+
+        // segno in ogni archivio la lista di transaction in cui è stato acquistato
+        archiveIdsList.getArchiveIds().forEach(
+                archiveId -> {
+                    Archive archive = archiveRepository.findArchiveById(archiveId.getArchiveId());
+                    List<Transaction> transactions = archive.getTransactions();
+                    if (transactions == null)
+                        transactions = new ArrayList<>();
+                    transactions.add(transaction);
+                    archive.setTransactions(transactions);
+                    archiveRepository.save(archive);
+                }
+        );
 
         return transaction;
     }

@@ -4,6 +4,7 @@ import it.polito.ai.lab03.repository.model.*;
 import it.polito.ai.lab03.repository.model.position.PositionRepresentationDownload;
 import it.polito.ai.lab03.service.ArchiveService;
 import it.polito.ai.lab03.service.PositionService;
+import it.polito.ai.lab03.service.UserDetailsServiceImpl;
 import it.polito.ai.lab03.utils.IAuthorizationFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/secured/positions")
 public class PositionController {
 
-    private ArchiveService archiveService;
     private IAuthorizationFacade authorizationFacade;
     private PositionService positionService;
+    private UserDetailsServiceImpl userService;
 
     @Autowired
-    public PositionController(ArchiveService as, PositionService ps, IAuthorizationFacade iaf) {
-        this.archiveService = as;
+    public PositionController(UserDetailsServiceImpl us, PositionService ps, IAuthorizationFacade iaf) {
         this.authorizationFacade = iaf;
+        this.userService = us;
         this.positionService = ps;
     }
 
@@ -36,7 +37,9 @@ public class PositionController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     PositionRepresentationDownload getPositionsRepresentations(@RequestBody AreaRequest locationRequest) {
-        return positionService.getRepresentations(locationRequest);
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        return positionService.getRepresentations(locationRequest, userId);
     }
 
     /**
@@ -50,6 +53,8 @@ public class PositionController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     int getArchiveCount(@RequestBody AreaRequest locationRequest) {
-        return positionService.getPositionsCount(locationRequest);
+        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+        String userId = userService.getUser(username).getId();
+        return positionService.getPositionsCount(locationRequest, userId);
     }
 }

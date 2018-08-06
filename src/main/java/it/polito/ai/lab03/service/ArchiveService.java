@@ -55,15 +55,6 @@ public class ArchiveService {
         return archive.getId();
     }
 
-    public List<Archive> buyArchives(List<String> archivesId, String buyer) {
-        List<Archive> archives = new ArrayList<>();
-        archivesId.forEach( id -> archives.add(archiveRepository.findArchiveById(id)));
-
-        // todo do transaction
-
-        return archives;
-    }
-
     @Transactional
     public StringResponse uploadArchive(User user, Positions positions) {
         List<Position> ps;

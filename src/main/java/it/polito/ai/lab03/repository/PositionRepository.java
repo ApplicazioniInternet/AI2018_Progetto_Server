@@ -15,11 +15,16 @@ public interface PositionRepository extends MongoRepository<Position, User>, Pos
     Position findPositionsById(@NonNull String id);
     List<Position> findPositionsByUserId(@NonNull String userId);
 
-    int countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(@NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
-    int countByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(@NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull double timestamp1, @NonNull double timestamp2);
+    int countByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrueAndUserIdIsNot(
+            @NonNull GeoJsonPolygon area, @NonNull double timestamp1,
+            @NonNull double timestamp2, @NonNull String userId);
+    int countByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
+            @NonNull List<String> userId, @NonNull GeoJsonPolygon area,
+            @NonNull double timestamp1, @NonNull double timestamp2);
 
-    List<Position> findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
-            @NonNull GeoJsonPolygon area, @NonNull long timestampStart, @NonNull long timestampEnd);
+    List<Position> findByLocationIsWithinAndTimestampBetweenAndOnSaleIsTrueAndUserIdIsNot(
+            @NonNull GeoJsonPolygon area, @NonNull long timestampStart,
+            @NonNull long timestampEnd, @NonNull String userId);
     List<Position> findByUserIdInAndLocationIsWithinAndTimestampBetweenAndOnSaleIsTrue(
             @NonNull List<String> userId, @NonNull GeoJsonPolygon area, @NonNull long timestampStart,
             @NonNull long timestampEnd);

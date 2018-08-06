@@ -31,12 +31,13 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
     }
 
     public List<ArchiveId> findArchivesIdbyPositionsInArea(@NonNull GeoJsonPolygon area,
-                                                 @NonNull long timestampStart,
-                                                 @NonNull long timestampEnd) {
+                                                           @NonNull long timestampStart,
+                                                           @NonNull long timestampEnd,
+                                                           @NonNull String userId) {
 
         Aggregation agg = newAggregation(
                 match(Criteria.where("location").within(area)
-                        .and("onSale").is(true)
+                        .and("onSale").is(true).and("userId").ne(userId)
                         .and("timestamp").gte(timestampStart).lte(timestampEnd)),
                 group("archiveId"),
                 project("_id").and("archiveId").previousOperation()
