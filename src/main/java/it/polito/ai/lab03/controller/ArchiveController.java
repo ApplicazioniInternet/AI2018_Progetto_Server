@@ -137,6 +137,22 @@ public class ArchiveController {
     }
 
     /**
+     * Funzione per prendere tutte le pos da archivi
+     *
+     * @param id --> archiveId
+     */
+    @RequestMapping(
+            path = "/archive/{id}/sales",
+            method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @ResponseStatus(value = HttpStatus.OK)
+    public @ResponseBody
+    int getArchiveSales(@PathVariable(value = "id") String id) {
+        return archiveService.getArchiveSalesCount(id);
+    }
+
+    /**
      * Questo metodo poichè ritorna una lista di rappresentazioni dato un poligono
      */
     @RequestMapping(

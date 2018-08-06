@@ -175,4 +175,13 @@ public class ArchiveService {
         } else
             return null;
     }
+
+    public int getArchiveSalesCount(String id) {
+        Archive archive = archiveRepository.findArchiveById(id);
+        List<Transaction> transactions = archive.getTransactions();
+        if (transactions != null)
+            return transactions.size();
+        else
+            return 0;
+    }
 }
