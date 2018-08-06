@@ -55,7 +55,7 @@ public class PositionRepositoryImpl implements PositionRepositoryCustom {
         result.forEach(
                 archiveId -> {
                     if (transactionRepository.
-                            findByBuyerIdAndArchivesBoughtArchiveListContains(userId, archiveId) != null)
+                            findByBuyerIdAndArchivesBoughtArchiveListContains(userId, archiveId).size() > 0)
                         archiveId.setBought(true);
                 }
         );

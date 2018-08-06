@@ -163,9 +163,16 @@ public class ArchiveController {
     @ResponseStatus(value = HttpStatus.OK)
     public @ResponseBody
     Transaction buyArchives(@RequestBody ArchiveLightList archiveLightList) {
-        String username = authorizationFacade.getAuthorization().getPrincipal().toString();
-        String userId = userService.getUser(username).getId();
-        return transactionService.buyArchives(archiveLightList, userId);
+        if (archiveLightList.getArchiveList().size() > 0) {
+            String username = authorizationFacade.getAuthorization().getPrincipal().toString();
+            String userId = userService.getUser(username).getId();
+            return transactionService.buyArchives(archiveLightList, userId);
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Archive list can not be empty"
+            );
+        }
     }
 
     /**
