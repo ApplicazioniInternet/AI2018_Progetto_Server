@@ -1,3 +1,0 @@
-FROM mongo
-COPY files/init/init-users.json /init-users.json
-CMD mongoimport --host mongodb --port 27017 --db db --collection users --file /init-users.json --jsonArray

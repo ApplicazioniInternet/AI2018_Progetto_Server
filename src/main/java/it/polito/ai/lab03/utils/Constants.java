@@ -14,7 +14,7 @@ public class Constants {
     public static final String ROLE_USER = "ROLE_USER";
 
     // Db informations
-    public static final String DATABASE_URI = "mongodb://localhost:27017";
+    public static final String DATABASE_URI = "mongodb://mongodb:27017";
     public static final String DATABASE_NAME = "db";
 
     // Configuration

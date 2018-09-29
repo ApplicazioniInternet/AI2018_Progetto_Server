@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: /home/ste/Poli/2 Magistrale/AppInt/progetto/AI2018_Progett
+ o_Server/src/main/java/META-INF
+Main-Class: it.polito.ai.lab03.Lab03Application
+
